@@ -1,4 +1,5 @@
 #include <Geode/Geode.hpp>
+#include <Geode/loader/GameEvent.hpp>
 #include "JoystickNode.hpp"
 #include "utils.hpp"
 
@@ -53,20 +54,23 @@ class $modify(JSUILayer, UILayer) {
 #include <ninxout.options_api/include/API.hpp>
 
 $on_mod(Loaded) {
-    OptionsAPI::addPreLevelSetting<bool>(
-        "Platformer Joystick",
-        "enable"_spr,
-        [](GJGameLevel*) {
-            Mod::get()->setSettingValue<bool>("enabled", !fastGetSetting<"enabled", bool>());
-        },
-        [](GJGameLevel*) { return fastGetSetting<"enabled", bool>(); },
-        "Enables the joystick in platformer levels."
-    );
-    OptionsAPI::addMidLevelSetting<bool>(
-        "Platformer Joystick",
-        "enable"_spr,
-        [](GJBaseGameLayer*) { Mod::get()->setSettingValue<bool>("enabled", !fastGetSetting<"enabled", bool>()); },
-        [](GJBaseGameLayer*) { return fastGetSetting<"enabled", bool>(); },
-        "Enables the joystick in platformer levels."
-    );
+    // options api isnt early load so if i didnt do this it would just not register the settings
+    (new geode::EventListener<geode::GameEventFilter>(geode::GameEventType::Loaded))->bind([](geode::GameEvent* ev) {
+        OptionsAPI::addPreLevelSetting<bool>(
+            "Platformer Joystick",
+            "enable"_spr,
+            [](GJGameLevel*) {
+                Mod::get()->setSettingValue<bool>("enabled", !fastGetSetting<"enabled", bool>());
+            },
+            [](GJGameLevel*) { return fastGetSetting<"enabled", bool>(); },
+            "Enables the joystick in platformer levels."
+        );
+        OptionsAPI::addMidLevelSetting<bool>(
+            "Platformer Joystick",
+            "enable"_spr,
+            [](GJBaseGameLayer*) { Mod::get()->setSettingValue<bool>("enabled", !fastGetSetting<"enabled", bool>()); },
+            [](GJBaseGameLayer*) { return fastGetSetting<"enabled", bool>(); },
+            "Enables the joystick in platformer levels."
+        );
+    });
 }
