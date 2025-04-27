@@ -33,13 +33,7 @@ JoystickNode *JoystickNode::create() {
 }
 
 bool JoystickNode::ccTouchBegan(CCTouch *touch, CCEvent *event) {
-    if (getScaledContentSize().width / 2 < ccpDistance(getPosition(), touch->getLocation())) {
-        return false;
-    }
-
-    // m_offset = m_center->getPosition() - convertToNodeSpace(touch->getLocation());
-
-    return true;
+    return ccpDistance(getPosition(), touch->getLocation()) <= getScaledContentSize().width / 2;
 }
 
 void handleInput(GJBaseGameLayer *layer, CCPoint input, CCPoint old) {

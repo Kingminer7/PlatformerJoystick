@@ -15,7 +15,7 @@ class $modify(JSUILayer, UILayer) {
         if (!UILayer::init(gjbgl)) return false;
 
         m_fields->m_joystickNode = JoystickNode::create();
-        addChildAtPosition(m_fields->m_joystickNode, Anchor::BottomLeft, {50, 50}, false);
+        addChildAtPosition(m_fields->m_joystickNode, Anchor::BottomLeft, {75, 75}, false);
 
         fixVisibility();
 
@@ -43,4 +43,30 @@ class $modify(JSUILayer, UILayer) {
             p2move->setPosition({10000, 10000});
         }
     }
+
+    void refreshDpad() {
+        UILayer::refreshDpad();
+        fixVisibility();
+    }
 };
+
+#include <ninxout.options_api/include/API.hpp>
+
+$on_mod(Loaded) {
+    OptionsAPI::addPreLevelSetting<bool>(
+        "Platformer Joystick",
+        "enable"_spr,
+        [](GJGameLevel*) {
+            Mod::get()->setSettingValue<bool>("enabled", !fastGetSetting<"enabled", bool>());
+        },
+        [](GJGameLevel*) { return fastGetSetting<"enabled", bool>(); },
+        "Enables the joystick in platformer levels."
+    );
+    OptionsAPI::addMidLevelSetting<bool>(
+        "Platformer Joystick",
+        "enable"_spr,
+        [](GJBaseGameLayer*) { Mod::get()->setSettingValue<bool>("enabled", !fastGetSetting<"enabled", bool>()); },
+        [](GJBaseGameLayer*) { return fastGetSetting<"enabled", bool>(); },
+        "Enables the joystick in platformer levels."
+    );
+}
