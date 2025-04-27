@@ -1,9 +1,6 @@
 #include <Geode/Geode.hpp>
 #include "JoystickNode.hpp"
 #include "utils.hpp"
-#ifndef GEODE_IS_WINDOWS
-#include <cxxabi.h>
-#endif
 
 using namespace geode::prelude;
 
@@ -46,40 +43,4 @@ class $modify(JSUILayer, UILayer) {
             p2move->setPosition({10000, 10000});
         }
     }
-
-    // refreshDpad is inlined :pensive:
-    #if defined(GEODE_IS_WINDOWS) || defined(GEODE_IS_ARM_MAC)
-
-    void togglePlatformerMode(bool p0) {    
-        UILayer::togglePlatformerMode(p0);
-
-        fixVisibility();
-    }
-
-    #else
-
-    void refreshDpad() {
-        UILayer::refreshDpad();
-
-        fixVisibility();
-    }
-
-    #endif
 };
-
-#if defined(GEODE_IS_WINDOWS) || defined(GEODE_IS_ARM_MAC)
-
-#include <Geode/modify/PlayLayer.hpp>
-class $modify (JSPlayLayer, PlayLayer) {
-    void resume() {
-        PlayLayer::resume();
-        if (auto layer = getChildByType<UILayer>(0)) {
-            auto jsLayer = static_cast<JSUILayer*>(layer);
-            if (jsLayer) {
-                jsLayer->fixVisibility();
-            }
-        }
-    }
-};
-
-#endif
