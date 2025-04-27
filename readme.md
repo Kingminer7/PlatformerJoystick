@@ -1,5 +1,7 @@
 # Platformer Joystick
 
+118000260 is a good test level btw (self promotion)
+
 ## NOTE: For specific platformer levels.
 
 ### How it works
