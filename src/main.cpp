@@ -54,8 +54,9 @@ class $modify(JSUILayer, UILayer) {
 #include <ninxout.options_api/include/API.hpp>
 
 $on_mod(Loaded) {
+    // update: ninx made it early load but im too lazy to delete the line via web editor so comment it is
     // options api isnt early load so if i didnt do this it would just not register the settings
-    (new geode::EventListener<geode::GameEventFilter>(geode::GameEventType::Loaded))->bind([](geode::GameEvent* ev) {
+    // (new geode::EventListener<geode::GameEventFilter>(geode::GameEventType::Loaded))->bind([](geode::GameEvent* ev) {
         OptionsAPI::addPreLevelSetting<bool>(
             "Platformer Joystick",
             "enable"_spr,
@@ -72,5 +73,5 @@ $on_mod(Loaded) {
             [](GJBaseGameLayer*) { return fastGetSetting<"enabled", bool>(); },
             "Enables the joystick in platformer levels."
         );
-    });
+    // });
 }
