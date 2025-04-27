@@ -44,25 +44,25 @@ bool JoystickNode::ccTouchBegan(CCTouch *touch, CCEvent *event) {
 
 void handleInput(GJBaseGameLayer *layer, CCPoint input, CCPoint old) {
     if (old.x == 1) {
-        layer->handleButton(false, 3, true);
+        layer->queueButton(3, false, false);
     } else if (old.x == -1) {
-        layer->handleButton(false, 2, true);
+        layer->queueButton(2, false, false);
     }
     if (old.y == 1) {
-        layer->handleButton(false, 3, false);
+        layer->queueButton(3, false, true);
     } else if (old.y == -1) {
-        layer->handleButton(false, 2, false);
+        layer->queueButton(2, false, true);
     }
 
     if (input.x == 1) {
-        layer->handleButton(true, 3, true);
+        layer->queueButton(3, true, false);
     } else if (input.x == -1) {
-        layer->handleButton(true, 2, true);
+        layer->queueButton(2, true, false);
     }
     if (input.y == 1) {
-        layer->handleButton(true, 3, false);
+        layer->queueButton(3, true, true);
     } else if (input.y == -1) {
-        layer->handleButton(true, 2, false);
+        layer->queueButton(2, true, true);
     }
 }
 
@@ -91,17 +91,17 @@ void JoystickNode::ccTouchMoved(CCTouch *touch, CCEvent *event) {
     auto angle = atan2(fromCenter.y, fromCenter.x);
 
     if (std::abs(fromCenter.x) > fromCenter.normalize().x * 15) {
-        if (angle > -M_PI / 3 && angle < M_PI / 3) {
+        if (angle > 5 * -M_PI / 12 && angle < 5 * M_PI / 12) {
             inp.x = 1;
-        } else if (angle > 2 * M_PI / 3 || angle < 2 * -M_PI / 3) {
+        } else if (angle > 7 * M_PI / 12 || angle < 7 * -M_PI / 12) {
             inp.x = -1;
         }
     }
 
     if (std::abs(fromCenter.y) > fromCenter.normalize().y * 15) {
-        if (angle > M_PI / 6 && angle < 5 * M_PI / 6) {
+        if (angle > M_PI / 12 && angle < 11 * M_PI / 12) {
             inp.y = 1;
-        } else if (angle < -M_PI / 6 && angle > -5 * M_PI / 6) {
+        } else if (angle < -M_PI / 12 && angle > -11 * M_PI / 12) {
             inp.y = -1;
         }
     }

@@ -7,8 +7,19 @@
 		"ios": "2.2074"
 	},
 	"id": "km7dev.platformerjoystick",
-	"name": "PlatformerJoystick",
+	"name": "Platformer Joystick",
 	"version": "v1.0.0",
 	"developer": "km7dev",
-	"description": ""
+	"description": "Adds a joystick to platformer mode.",
+	"dependencies": {
+		"geode.node-ids": "1.20.0"
+	},
+	"settings": {
+		"enabled": {
+			"type": "bool",
+			"name": "Enabled",
+			"description": "Enable or disable the joystick.",
+			"default": true
+		}
+	}
 }
