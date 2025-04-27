@@ -102,8 +102,8 @@ void JoystickNode::ccTouchMoved(CCTouch *touch, CCEvent *event) {
     }
 
     if (inp != m_currentInput) {
-        if (auto pl = PlayLayer::get()) {
-            handleInput(pl, inp, m_currentInput);
+        if (auto uil = UILayer::get(); uil && uil->m_gameLayer) {
+            handleInput(uil->m_gameLayer, inp, m_currentInput);
         }
     }
     m_currentInput = inp;
