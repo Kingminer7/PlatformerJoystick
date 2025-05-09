@@ -22,6 +22,12 @@
 			"name": "Enabled",
 			"description": "Enable or disable the joystick.",
 			"default": true
+		},
+		"disable-updown": {
+			"type": "bool",
+			"name": "Vertical in 1 Player Mode",
+			"description": "Disables the vertical input while in 1 player mode, as they're registered as left and right.",
+			"default": true
 		}
 	}
 }

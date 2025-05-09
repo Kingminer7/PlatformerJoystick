@@ -14,20 +14,25 @@ class $modify(JSUILayer, UILayer) {
 
     bool init(GJBaseGameLayer *gjbgl) {
         if (!UILayer::init(gjbgl)) return false;
+        queueInMainThread([this, gjbgl](){
+            m_fields->m_joystickNode = JoystickNode::create();
+            log::info("{}", gjbgl);
+            log::info("{}", gjbgl->m_level);
+            log::info("{}", gjbgl->m_level->m_twoPlayerMode);
+            m_fields->m_joystickNode->m_twoPlayer = gjbgl->m_level->m_twoPlayerMode;
+            addChildAtPosition(m_fields->m_joystickNode, Anchor::BottomLeft, {75, 75}, false);
 
-        m_fields->m_joystickNode = JoystickNode::create();
-        addChildAtPosition(m_fields->m_joystickNode, Anchor::BottomLeft, {75, 75}, false);
+            fixVisibility();
 
-        fixVisibility();
-
+        });
         return true;
     }
 
     void fixVisibility() {
+        if (!m_fields->m_joystickNode) {
+            return;
+        }
         if (!fastGetSetting<"enabled", bool>() || !m_inPlatformer) {
-            if (!m_fields->m_joystickNode) {
-                return;
-            }
             m_fields->m_joystickNode->setVisible(false);
             m_fields->m_joystickNode->setTouchEnabled(false);
             return;

@@ -1,4 +1,5 @@
 #include "JoystickNode.hpp"
+#include "utils.hpp"
 
 bool JoystickNode::init() {
     if (!CCMenu::init()) return false;
@@ -37,16 +38,18 @@ bool JoystickNode::ccTouchBegan(CCTouch *touch, CCEvent *event) {
     return ccpDistance(getPosition(), touch->getLocation()) <= getScaledContentSize().width / 2;
 }
 
-void handleInput(GJBaseGameLayer *layer, CCPoint input, CCPoint old) {
+void JoystickNode::handleInput(GJBaseGameLayer *layer, CCPoint input, CCPoint old) {
     if (old.x == 1) {
         layer->queueButton(3, false, false);
     } else if (old.x == -1) {
         layer->queueButton(2, false, false);
     }
-    if (old.y == 1) {
-        layer->queueButton(3, false, true);
-    } else if (old.y == -1) {
-        layer->queueButton(2, false, true);
+    if (!fastGetSetting<"disable-updown", bool>() || m_twoPlayer) {
+        if (old.y == 1) {
+            layer->queueButton(3, false, true);
+        } else if (old.y == -1) { 
+            layer->queueButton(2, false, true);
+        }
     }
 
     if (input.x == 1) {
@@ -54,10 +57,12 @@ void handleInput(GJBaseGameLayer *layer, CCPoint input, CCPoint old) {
     } else if (input.x == -1) {
         layer->queueButton(2, true, false);
     }
-    if (input.y == 1) {
-        layer->queueButton(3, true, true);
-    } else if (input.y == -1) {
-        layer->queueButton(2, true, true);
+    if (!fastGetSetting<"disable-updown", bool>() || m_twoPlayer) {
+        if (input.y == 1) {
+            layer->queueButton(3, true, true);
+        } else if (input.y == -1) {
+            layer->queueButton(2, true, true);
+        }
     }
 }
 
