@@ -40,8 +40,6 @@ jobs:
         uses: geode-sdk/build-geode-mod@main
         with:
           combine: true
-          sdk: nightly
-          cli: nightly
           bindings: kingminer7/bindings
           target: ${{ matrix.config.target }}
 
