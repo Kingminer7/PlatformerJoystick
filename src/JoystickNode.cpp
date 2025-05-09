@@ -33,7 +33,7 @@ JoystickNode *JoystickNode::create() {
 }
 
 bool JoystickNode::ccTouchBegan(CCTouch *touch, CCEvent *event) {
-    if (!m_bTouchEnabled || !m_bVisible) return false;
+    if (!isTouchEnabled() || !nodeIsVisible(this)) return false;
     return ccpDistance(getPosition(), touch->getLocation()) <= getScaledContentSize().width / 2;
 }
 
@@ -62,8 +62,8 @@ void handleInput(GJBaseGameLayer *layer, CCPoint input, CCPoint old) {
 }
 
 void JoystickNode::ccTouchEnded(CCTouch *touch, CCEvent *event) {
-    if (auto pl = PlayLayer::get()) {
-        handleInput(pl, {0, 0}, m_currentInput);
+    if (auto uil = UILayer::get(); uil && uil->m_gameLayer) {
+        handleInput(uil->m_gameLayer, {0, 0}, m_currentInput);
     }
 
     m_currentInput = CCPoint{0, 0};
