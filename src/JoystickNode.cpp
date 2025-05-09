@@ -33,7 +33,7 @@ JoystickNode *JoystickNode::create() {
 }
 
 bool JoystickNode::ccTouchBegan(CCTouch *touch, CCEvent *event) {
-    if (!m_bTouchEnabled) return false;
+    if (!m_bTouchEnabled || !m_bVisible) return false;
     return ccpDistance(getPosition(), touch->getLocation()) <= getScaledContentSize().width / 2;
 }
 
