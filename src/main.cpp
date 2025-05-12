@@ -65,14 +65,17 @@ $on_mod(Loaded) {
         OptionsAPI::addPreLevelSetting<bool>(
             "Platformer Joystick",
             "enable"_spr,
-            [](GJGameLevel*) {
-                Mod::get()->setSettingValue<bool>("enabled", !fastGetSetting<"enabled", bool>());
+            [](GJGameLevel *level) {
+                auto key = fmt::format("joystick-on-{}", level->m_levelID);
+                Mod::get()->setSavedValue<bool>(key, !Mod::get()->getSavedValue<bool>(key, true));
             },
-            [](GJGameLevel*) { return fastGetSetting<"enabled", bool>(); },
-            "Enables the joystick in platformer levels."
+            [](GJGameLevel *level) {
+                return Mod::get()->getSavedValue<bool>(fmt::format("joystick-on-{}", level->m_levelID), true);
+            },
+            "Enables the joystick in this level. (Platformer only)"
         );
         OptionsAPI::addMidLevelSetting<bool>(
-            "Platformer Joystick",
+            "Platformer Joystick (Global)",
             "enable"_spr,
             [](GJBaseGameLayer*) { Mod::get()->setSettingValue<bool>("enabled", !fastGetSetting<"enabled", bool>()); },
             [](GJBaseGameLayer*) { return fastGetSetting<"enabled", bool>(); },
