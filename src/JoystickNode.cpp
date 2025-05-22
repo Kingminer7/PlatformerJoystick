@@ -10,13 +10,11 @@ bool enableCounters = false;
 class $modify(JSPL, PlayLayer) {
     void setupHasCompleted() {
         enableCounters = false;
-        if (fastGetSetting<"counters", bool>()) {
-            for (auto obj : CCArrayExt<GameObject*>(m_objects)) {
-                if (obj->m_objectID == 914) {
-                    if (auto txt = static_cast<TextGameObject*>(obj); txt && txt->m_text == "--joystick-counters") {
-                        //removeObject(obj, true);
-                        enableCounters = true;
-                    }
+        for (auto obj : CCArrayExt<GameObject*>(m_objects)) {
+            if (obj->m_objectID == 914) {
+                if (auto txt = static_cast<TextGameObject*>(obj); txt && txt->m_text == "--joystick-counters") {
+                    //removeObject(obj, true);
+                    enableCounters = true;
                 }
             }
         }
@@ -27,13 +25,11 @@ class $modify(JSPL, PlayLayer) {
 class $modify(JSLEL, LevelEditorLayer) {
     void onPlaytest() {
         enableCounters = false;
-        if (fastGetSetting<"counters", bool>()) {
-            for (auto obj : CCArrayExt<GameObject*>(m_objects)) {
-                if (obj->m_objectID == 914) {
-                    if (auto txt = static_cast<TextGameObject*>(obj); txt && txt->m_text == "--joystick-counters") {
-                        //removeObject(obj, true);
-                        enableCounters = true;
-                    }
+        for (auto obj : CCArrayExt<GameObject*>(m_objects)) {
+            if (obj->m_objectID == 914) {
+                if (auto txt = static_cast<TextGameObject*>(obj); txt && txt->m_text == "--joystick-counters") {
+                    //removeObject(obj, true);
+                    enableCounters = true;
                 }
             }
         }
