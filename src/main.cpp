@@ -59,27 +59,23 @@ class $modify(JSUILayer, UILayer) {
 #include <ninxout.options_api/include/API.hpp>
 
 $on_mod(Loaded) {
-    // update: ninx made it early load but im too lazy to delete the line via web editor so comment it is
-    // options api isnt early load so if i didnt do this it would just not register the settings
-    // (new geode::EventListener<geode::GameEventFilter>(geode::GameEventType::Loaded))->bind([](geode::GameEvent* ev) {
-        OptionsAPI::addPreLevelSetting<bool>(
-            "Platformer Joystick",
-            "enable"_spr,
-            [](GJGameLevel *level) {
-                auto key = fmt::format("joystick-on-{}", level->m_levelID);
-                Mod::get()->setSavedValue<bool>(key, !Mod::get()->getSavedValue<bool>(key, true));
-            },
-            [](GJGameLevel *level) {
-                return Mod::get()->getSavedValue<bool>(fmt::format("joystick-on-{}", level->m_levelID), true);
-            },
-            "Enables the joystick in this level. (Platformer only)"
-        );
-        OptionsAPI::addMidLevelSetting<bool>(
-            "Platformer Joystick (Global)",
-            "enable"_spr,
-            [](GJBaseGameLayer*) { Mod::get()->setSettingValue<bool>("enabled", !fastGetSetting<"enabled", bool>()); },
-            [](GJBaseGameLayer*) { return fastGetSetting<"enabled", bool>(); },
-            "Enables the joystick in platformer levels."
-        );
-    // });
+    OptionsAPI::addPreLevelSetting<bool>(
+        "Platformer Joystick",
+        "enable"_spr,
+        [](GJGameLevel *level) {
+            auto key = fmt::format("joystick-on-{}", level->m_levelID);
+            Mod::get()->setSavedValue<bool>(key, !Mod::get()->getSavedValue<bool>(key, true));
+        },
+        [](GJGameLevel *level) {
+            return Mod::get()->getSavedValue<bool>(fmt::format("joystick-on-{}", level->m_levelID), true);
+        },
+        "Enables the joystick in this level. (Platformer only)"
+    );
+    OptionsAPI::addMidLevelSetting<bool>(
+        "Platformer Joystick (Global)",
+        "enable"_spr,
+        [](GJBaseGameLayer*) { Mod::get()->setSettingValue<bool>("enabled", !fastGetSetting<"enabled", bool>()); },
+        [](GJBaseGameLayer*) { return fastGetSetting<"enabled", bool>(); },
+        "Enables the joystick in platformer levels."
+    );
 }
