@@ -1,6 +1,46 @@
 #include "JoystickNode.hpp"
 #include "utils.hpp"
 
+#include <Geode/modify/GJBaseGameLayer.hpp>
+#include <Geode/modify/PlayLayer.hpp>
+#include <Geode/modify/LevelEditorLayer.hpp>
+
+bool enableCounters = false;
+
+class $modify(JSPL, PlayLayer) {
+    void setupHasCompleted() {
+        enableCounters = false;
+        if (fastGetSetting<"counters", bool>()) {
+            for (auto obj : CCArrayExt<GameObject*>(m_objects)) {
+                if (obj->m_objectID == 914) {
+                    if (auto txt = static_cast<TextGameObject*>(obj); txt && txt->m_text == "--joystick-counters") {
+                        //removeObject(obj, true);
+                        enableCounters = true;
+                    }
+                }
+            }
+        }
+        PlayLayer::setupHasCompleted();
+    }
+};
+
+class $modify(JSLEL, LevelEditorLayer) {
+    void onPlaytest() {
+        enableCounters = false;
+        if (fastGetSetting<"counters", bool>()) {
+            for (auto obj : CCArrayExt<GameObject*>(m_objects)) {
+                if (obj->m_objectID == 914) {
+                    if (auto txt = static_cast<TextGameObject*>(obj); txt && txt->m_text == "--joystick-counters") {
+                        //removeObject(obj, true);
+                        enableCounters = true;
+                    }
+                }
+            }
+        }
+        LevelEditorLayer::onPlaytest();
+    }
+};
+
 bool JoystickNode::init() {
     if (!CCMenu::init()) return false;
     setContentSize({100, 100});
@@ -57,12 +97,14 @@ void JoystickNode::handleInput(GJBaseGameLayer *layer, CCPoint input, CCPoint ol
     } else if (input.x == -1) {
         layer->queueButton(2, true, false);
     }
+    if (enableCounters) layer->updateCounters(3740, input.x);
     if (!fastGetSetting<"disable-updown", bool>() || m_twoPlayer) {
         if (input.y == 1) {
             layer->queueButton(3, true, true);
         } else if (input.y == -1) {
             layer->queueButton(2, true, true);
         }
+        if (enableCounters) layer->updateCounters(3741, input.y);
     }
 }
 
