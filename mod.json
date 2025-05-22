@@ -32,7 +32,7 @@
                 "counters": {
                         "type": "bool",
                         "name": "Change Counters",
-                        "description": "Changes counter 3740 for horizontal and 3741 for vertical if a text object with \"--joystick-counters\"",
+                        "description": "Changes counter 3740 for horizontal and 3741 for vertical if a text object with \"--joystick-counters\" is found",
                         "default": true
                 }
 	}
