@@ -28,6 +28,12 @@
 			"name": "Vertical in 1 Player Mode",
 			"description": "Disables the vertical input while in 1 player mode, as they're registered as left and right.",
 			"default": true
-		}
+		},
+                "counters": {
+                        "type": "bool",
+                        "name": "Change Counters",
+                        "description": "Changes counter 3740 for horizontal and 3741 for vertical if a text object with \"--joystick-counters\"",
+                        "default": true
+                }
 	}
 }
