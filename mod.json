@@ -17,12 +17,6 @@
 		}
 	},
 	"settings": {
-		"enabled": {
-			"type": "bool",
-			"name": "Enabled",
-			"description": "Enable or disable the joystick.",
-			"default": true
-		},
 		"disable-updown": {
 			"type": "bool",
 			"name": "Vertical in 1 Player Mode",
