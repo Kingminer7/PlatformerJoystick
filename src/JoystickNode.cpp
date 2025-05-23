@@ -351,9 +351,6 @@ class $modify(JSUILayer, UILayer) {
         if (!UILayer::init(gjbgl)) return false;
         queueInMainThread([this, gjbgl](){
             m_fields->m_joystickNode = JoystickNode::create();
-            log::info("{}", gjbgl);
-            log::info("{}", gjbgl->m_level);
-            log::info("{}", gjbgl->m_level->m_twoPlayerMode);
             m_fields->m_joystickNode->m_twoPlayer = gjbgl->m_level->m_twoPlayerMode;
             addChildAtPosition(m_fields->m_joystickNode, Anchor::BottomLeft, {75, 75}, false);
 
