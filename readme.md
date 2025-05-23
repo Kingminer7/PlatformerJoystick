@@ -6,12 +6,13 @@
 - Add a level arg to change default setting
 
 ### Notes
+Joystick input is managed with player 1 and player 2 controls.
+- Left and right control player 1
+- Up and down control player 2
 
-- Left and right control player 1's movement.
-- Up and down control player 2's movement.
-- Levels can set whether or not they have joysticks by default by adding a text object with "--joystick-default".
-- Item IDs can be used for various properties of the joystick.
-  - Enable by adding a text object with "--joystick-counters".
-  - Item ID 3740 will be set to 1 if joystick is enabled.
-  - Item ID 3741 will be set to -1, 0, or 1, depending if the joystick is on the left, middle, or right.
-  - Item ID 3742 will be set to -1, 0, or 1, depending if the joystick is on the bottom, middle, or top.
+Levels can enable joysticks by default by including a text object that says `--joystick-enabled`. I recommend setting it to hidden.
+
+The mod can manage item ids if the level includes a text object that says `--joystick-counters`. I recommend setting it to hidden.
+- Item Id 3740: 1 if counters are enabled and the mod is enabled.
+- Item Id 3741: Left and right for the joystick
+- Item Id 3742: Up and down for the joystick

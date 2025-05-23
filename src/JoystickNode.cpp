@@ -58,43 +58,45 @@
 // }
 // #endif
 
+bool enableJoystick = false;
 bool enableCounters = false;
+
+void runChecks(CCArray *objects) {
+    enableJoystick = false;
+    enableCounters = false;
+    for (auto obj : CCArrayExt<GameObject*>(objects)) {
+        if (obj->m_objectID == 914) {
+                if (auto txt = static_cast<TextGameObject*>(obj)) {
+                    if (txt->m_text == "--enable-joystick") 
+                        enableJoystick = true;
+                    else if (txt->m_text == "--joystick-counters") 
+                        enableCounters = true;
+            } 
+        }
+    }
+}
 
 class $modify(JSPL, PlayLayer) {
     struct Fields {
         bool m_hasPaused = false;
     };
     void setupHasCompleted() {
-        enableCounters = false;
-        for (auto obj : CCArrayExt<GameObject*>(m_objects)) {
-            if (obj->m_objectID == 914) {
-                if (auto txt = static_cast<TextGameObject*>(obj); txt && txt->m_text == "--joystick-counters") {
-                    enableCounters = true;
-                }
-            }
-        }
+        runChecks(m_objects);
         PlayLayer::setupHasCompleted();
-        updateCounters(3740, enableCounters ? 1 : 0);
+        if (enableCounters) updateCounters(3740, 1);
     }
 
     void resetLevel() {
         PlayLayer::resetLevel();
-        updateCounters(3740, enableCounters ? 1 : 0);
+        if (enableCounters) updateCounters(3740, 1);
     }
 };
 
 class $modify(JSLEL, LevelEditorLayer) {
     void onPlaytest() {
-        enableCounters = false;
-        for (auto obj : CCArrayExt<GameObject*>(m_objects)) {
-            if (obj->m_objectID == 914) {
-                if (auto txt = static_cast<TextGameObject*>(obj); txt && txt->m_text == "--joystick-counters") {
-                    enableCounters = true;
-                }
-            }
-        }
+        runChecks(m_objects);
         LevelEditorLayer::onPlaytest();
-        updateCounters(3740, enableCounters ? 1 : 0);
+        if (enableCounters) updateCounters(3740, 1);
     }
 };
 
@@ -158,14 +160,14 @@ void JoystickNode::handleInput(GJBaseGameLayer *layer, CCPoint input, CCPoint ol
     } else if (input.x == -1) {
         layer->queueButton(2, true, false);
     }
-    if (enableCounters) layer->updateCounters(3741, m_currentInput.x);
+    if (enableCounters) layer->updateCounters(3741, input.x);
     if (!fastGetSetting<"disable-updown", bool>() || m_twoPlayer) {
         if (input.y == 1) {
             layer->queueButton(3, true, true);
         } else if (input.y == -1) {
             layer->queueButton(2, true, true);
         }
-        if (enableCounters) layer->updateCounters(3742, m_currentInput.y);
+        if (enableCounters) layer->updateCounters(3742, input.y);
     }
 }
 
@@ -424,7 +426,7 @@ class $modify(JSUILayer, UILayer) {
         if (!m_fields->m_joystickNode) {
             return;
         }
-        if (!fastGetSetting<"enabled", bool>() || !m_inPlatformer) {
+        if (!enableJoystick || !m_inPlatformer) { // fastGetSetting<"enabled", bool>()
             m_fields->m_joystickNode->setVisible(false);
             m_fields->m_joystickNode->setTouchEnabled(false);
             return;
@@ -442,16 +444,16 @@ class $modify(JSUILayer, UILayer) {
         }
     }
 
-    // refreshDpad is inlined :pensive:
-    #if defined(GEODE_IS_WINDOWS) || defined(GEODE_IS_ARM_MAC)
+    // // refreshDpad is inlined :pensive:
+    // #if defined(GEODE_IS_WINDOWS) || defined(GEODE_IS_ARM_MAC)
 
-    void togglePlatformerMode(bool p0) {    
-        UILayer::togglePlatformerMode(p0);
+    // void togglePlatformerMode(bool p0) {    
+    //     UILayer::togglePlatformerMode(p0);
 
-        fixVisibility();
-    }
+    //     fixVisibility();
+    // }
 
-    #else
+    // #else
 
     void refreshDpad() {
         UILayer::refreshDpad();
@@ -459,45 +461,7 @@ class $modify(JSUILayer, UILayer) {
         fixVisibility();
     }
 
-    #endif
-
-    void keyDown(enumKeyCodes key) {
-        auto joystick = m_fields->m_joystickNode;
-        if (key == enumKeyCodes::KEY_A) {
-            joystick->m_currentInput.x -= 1;
-            if (enableCounters) m_gameLayer->updateCounters(3741, joystick->m_currentInput.x);
-        } else if (key == enumKeyCodes::KEY_D) {
-            joystick->m_currentInput.x += 1;
-            if (enableCounters) m_gameLayer->updateCounters(3741, joystick->m_currentInput.x);
-        } else if (key == enumKeyCodes::KEY_W) {
-            joystick->m_currentInput.y += 1;
-            if (enableCounters) m_gameLayer->updateCounters(3742, joystick->m_currentInput.y);
-        } else if (key == enumKeyCodes::KEY_S) {
-            joystick->m_currentInput.y -= 1;
-            if (enableCounters) m_gameLayer->updateCounters(3742, joystick->m_currentInput.y);
-        }
-        
-        UILayer::keyDown(key);
-    }
-
-    void keyUp(enumKeyCodes key) {
-        auto joystick = m_fields->m_joystickNode;
-        if (key == enumKeyCodes::KEY_A) {
-            joystick->m_currentInput.x += 1;
-            if (enableCounters) m_gameLayer->updateCounters(3741, joystick->m_currentInput.x);
-        } else if (key == enumKeyCodes::KEY_D) {
-            joystick->m_currentInput.x -= 1;
-            if (enableCounters) m_gameLayer->updateCounters(3741, joystick->m_currentInput.x);
-        } else if (key == enumKeyCodes::KEY_W) {
-            joystick->m_currentInput.y -= 1;
-            if (enableCounters) m_gameLayer->updateCounters(3742, joystick->m_currentInput.y);
-        } else if (key == enumKeyCodes::KEY_S) {
-            joystick->m_currentInput.y += 1;
-            if (enableCounters) m_gameLayer->updateCounters(3742, joystick->m_currentInput.y);
-        }
-        
-        UILayer::keyUp(key);
-    }
+    // #endif
 };
 
 #if defined(GEODE_IS_WINDOWS) || defined(GEODE_IS_ARM_MAC)
