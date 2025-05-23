@@ -1,10 +1,17 @@
 # Platformer Joystick
-
 ## TODO
-- The readme
-- Probably change default for per level
-- Probably a level argument for default
 
-Basically uh left and right are for player 1 left and right, while up and down are for player 2 left and right.
+- Update the README
+- Change the default settings
+- Add a level arg to change default setting
 
-Also changes counter 3740 for horizontal and 3741 for vertical if a text object with "--joystick-counters" is found
+### Notes
+
+- Left and right control player 1's movement.
+- Up and down control player 2's movement.
+- Levels can set whether or not they have joysticks by default by adding a text object with "--joystick-default".
+- Item IDs can be used for various properties of the joystick.
+  - Enable by adding a text object with "--joystick-counters".
+  - Item ID 3740 will be set to 1 if joystick is enabled.
+  - Item ID 3741 will be set to -1, 0, or 1, depending if the joystick is on the left, middle, or right.
+  - Item ID 3742 will be set to -1, 0, or 1, depending if the joystick is on the bottom, middle, or top.
