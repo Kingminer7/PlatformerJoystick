@@ -10,15 +10,16 @@ class JoystickNode : public CCMenu {
         void ccTouchEnded(CCTouch *touch, CCEvent *event) override;
         void ccTouchMoved(CCTouch *touch, CCEvent *event) override;
         void ccTouchCancelled(CCTouch *touch, CCEvent *event) override;
+
+        void draw() override;
         void registerWithTouchDispatcher() override;
-
-        void handleInput(GJBaseGameLayer *layer, CCPoint input, CCPoint old);
-
-        CCPoint m_currentInput = {0, 0};
 
         CCSprite *m_bg = nullptr;
         CCSprite *m_center = nullptr;
     public:
         static JoystickNode *create();
+        void handleInput(GJBaseGameLayer *layer, CCPoint input, CCPoint old);
+        
         bool m_twoPlayer = false;
+        CCPoint m_currentInput = {0, 0};
 };

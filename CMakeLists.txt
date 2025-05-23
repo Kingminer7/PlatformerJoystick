@@ -9,9 +9,26 @@ else()
 endif()
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
+if (DEFINED ENV{GITHUB_ACTIONS})
+    message("Github Actions Build")
+    add_definitions(-DGITHUB_ACTIONS)
+endif()
+
+if (DEFINED ENV{RELEASE_BUILD})
+    message("Building for release!")
+    add_definitions(-DRELEASE_BUILD)
+else()
+    message("Building for debug!")
+    add_definitions(-DDEBUG_BUILD)
+endif()
+
 project(PlatformerJoystick VERSION 1.0.0)
 
-add_library(${PROJECT_NAME} SHARED src/JoystickNode.cpp src/main.cpp)
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
+    src/*.cpp
+)
+
+add_library(${PROJECT_NAME} SHARED ${SOURCES})
 
 if (NOT DEFINED ENV{GEODE_SDK})
     message(FATAL_ERROR "Unable to find Geode SDK! Please define GEODE_SDK environment variable to point to Geode")

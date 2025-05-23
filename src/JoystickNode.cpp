@@ -5,20 +5,81 @@
 #include <Geode/modify/PlayLayer.hpp>
 #include <Geode/modify/LevelEditorLayer.hpp>
 
+// #ifndef GEODE_IS_IOS
+// #include <geode.custom-keybinds/include/Keybinds.hpp>
+
+// using namespace keybinds;
+
+// $on_mod(Loaded) {
+//     keybinds::BindManager::get()->registerBindable({
+//         "joystick_up"_spr,
+//         "Joystick Up",
+//         "Up for joystick",
+//         { 
+//             keybinds::Keybind::create(KEY_W, keybinds::Modifier::None),
+//             keybinds::Keybind::create(CONTROLLER_Up, keybinds::Modifier::None),
+//             keybinds::Keybind::create(KEY_ArrowUp, keybinds::Modifier::None),
+//          },
+//         "Joystick"
+//     });
+//     keybinds::BindManager::get()->registerBindable({
+//         "joystick_down"_spr,
+//         "Joystick Down",
+//         "Down for joystick",
+//         { 
+//             keybinds::Keybind::create(KEY_S, keybinds::Modifier::None),
+//             keybinds::Keybind::create(CONTROLLER_Down, keybinds::Modifier::None),
+//             keybinds::Keybind::create(KEY_ArrowDown, keybinds::Modifier::None),
+//          },
+//         "Joystick"
+//     });
+//     keybinds::BindManager::get()->registerBindable({
+//         "joystick_left"_spr,
+//         "Joystick Left",
+//         "Left for joystick",
+//         { 
+//             keybinds::Keybind::create(KEY_A, keybinds::Modifier::None),
+//             keybinds::Keybind::create(CONTROLLER_Left, keybinds::Modifier::None),
+//             keybinds::Keybind::create(KEY_ArrowLeft, keybinds::Modifier::None),
+//          },
+//         "Joystick"
+//     });
+//     keybinds::BindManager::get()->registerBindable({
+//         "joystick_right"_spr,
+//         "Joystick Right",
+//         "Right for joystick",
+//         { 
+//             keybinds::Keybind::create(KEY_D, keybinds::Modifier::None),
+//             keybinds::Keybind::create(CONTROLLER_Right, keybinds::Modifier::None),
+//             keybinds::Keybind::create(KEY_ArrowRight, keybinds::Modifier::None),
+//          },
+//         "Joystick"
+//     });
+// }
+// #endif
+
 bool enableCounters = false;
 
 class $modify(JSPL, PlayLayer) {
+    struct Fields {
+        bool m_hasPaused = false;
+    };
     void setupHasCompleted() {
         enableCounters = false;
         for (auto obj : CCArrayExt<GameObject*>(m_objects)) {
             if (obj->m_objectID == 914) {
                 if (auto txt = static_cast<TextGameObject*>(obj); txt && txt->m_text == "--joystick-counters") {
-                    //removeObject(obj, true);
                     enableCounters = true;
                 }
             }
         }
         PlayLayer::setupHasCompleted();
+        updateCounters(3740, enableCounters ? 1 : 0);
+    }
+
+    void resetLevel() {
+        PlayLayer::resetLevel();
+        updateCounters(3740, enableCounters ? 1 : 0);
     }
 };
 
@@ -28,12 +89,12 @@ class $modify(JSLEL, LevelEditorLayer) {
         for (auto obj : CCArrayExt<GameObject*>(m_objects)) {
             if (obj->m_objectID == 914) {
                 if (auto txt = static_cast<TextGameObject*>(obj); txt && txt->m_text == "--joystick-counters") {
-                    //removeObject(obj, true);
                     enableCounters = true;
                 }
             }
         }
         LevelEditorLayer::onPlaytest();
+        updateCounters(3740, enableCounters ? 1 : 0);
     }
 };
 
@@ -71,7 +132,11 @@ JoystickNode *JoystickNode::create() {
 
 bool JoystickNode::ccTouchBegan(CCTouch *touch, CCEvent *event) {
     if (!isTouchEnabled() || !nodeIsVisible(this)) return false;
-    return ccpDistance(getPosition(), touch->getLocation()) <= getScaledContentSize().width / 2;
+    if (ccpDistance(getPosition(), touch->getLocation()) <= getScaledContentSize().width / 2) {
+        ccTouchMoved(touch, event);
+        return true;
+    }
+    return false;
 }
 
 void JoystickNode::handleInput(GJBaseGameLayer *layer, CCPoint input, CCPoint old) {
@@ -93,14 +158,14 @@ void JoystickNode::handleInput(GJBaseGameLayer *layer, CCPoint input, CCPoint ol
     } else if (input.x == -1) {
         layer->queueButton(2, true, false);
     }
-    if (enableCounters) layer->updateCounters(3740, input.x);
+    if (enableCounters) layer->updateCounters(3741, m_currentInput.x);
     if (!fastGetSetting<"disable-updown", bool>() || m_twoPlayer) {
         if (input.y == 1) {
             layer->queueButton(3, true, true);
         } else if (input.y == -1) {
             layer->queueButton(2, true, true);
         }
-        if (enableCounters) layer->updateCounters(3741, input.y);
+        if (enableCounters) layer->updateCounters(3742, m_currentInput.y);
     }
 }
 
@@ -128,7 +193,7 @@ void JoystickNode::ccTouchMoved(CCTouch *touch, CCEvent *event) {
 
     auto angle = atan2(fromCenter.y, fromCenter.x);
 
-    if (std::abs(fromCenter.x) > fromCenter.normalize().x * 15) {
+    if (std::abs(fromCenter.x) > std::abs(fromCenter.normalize().x) * 15) {
         if (angle > 5 * -M_PI / 12 && angle < 5 * M_PI / 12) {
             inp.x = 1;
         } else if (angle > 7 * M_PI / 12 || angle < 7 * -M_PI / 12) {
@@ -136,7 +201,7 @@ void JoystickNode::ccTouchMoved(CCTouch *touch, CCEvent *event) {
         }
     }
 
-    if (std::abs(fromCenter.y) > fromCenter.normalize().y * 15) {
+    if (std::abs(fromCenter.y) > std::abs(fromCenter.normalize().y) * 15) {
         if (angle > M_PI / 12 && angle < 11 * M_PI / 12) {
             inp.y = 1;
         } else if (angle < -M_PI / 12 && angle > -11 * M_PI / 12) {
@@ -161,3 +226,318 @@ void JoystickNode::ccTouchCancelled(CCTouch *touch, CCEvent *event) {
 void JoystickNode::registerWithTouchDispatcher() {
     CCTouchDispatcher::get()->addTargetedDelegate(this, -512, true);
 }
+
+void JoystickNode::draw() {
+    CCMenu::draw();
+
+    #if defined(DEBUG_BUILD) && !defined(GITHUB_ACTIONS)
+    {
+        // Draw green arc for horizontal movement (right)
+        ccDrawColor4B(0, 255, 0, 100); // Set color to green with some transparency
+        auto center = getScaledContentSize() / 2; // Center of the circle
+        auto radius = getScaledContentWidth() / 2; // Radius of the circle
+        auto startAngle = 5 * -M_PI / 12; // Start angle
+        auto sweepAngle = 5 * M_PI / 12 - 5 * -M_PI / 12; // Sweep angle
+        int segments = 50; // Number of segments for smoothness
+
+        std::vector<CCPoint> vertices;
+        vertices.push_back(center); // Add the center point
+
+        for (int i = 0; i <= segments; ++i) {
+            float angle = startAngle + (sweepAngle * i / segments);
+            vertices.push_back({
+                center.width + radius * cos(angle),
+                center.height + radius * sin(angle)
+            });
+        }
+
+        ccDrawSolidPoly(vertices.data(), vertices.size(), ccc4f(0, 1, 0, 0.15f));
+    }
+
+    {
+        // Draw green arc for horizontal movement (Left)
+        ccDrawColor4B(0, 255, 0, 100); // Set color to green with some transparency
+        auto center = getScaledContentSize() / 2; // Center of the circle
+        auto radius = getScaledContentWidth() / 2; // Radius of the circle
+        auto startAngle = 7 * M_PI / 12; // Start angle
+        auto sweepAngle = 11 * M_PI / 12 - M_PI / 12; // Sweep angle
+        int segments = 50; // Number of segments for smoothness
+
+        std::vector<CCPoint> vertices;
+        vertices.push_back(center); // Add the center point
+
+        for (int i = 0; i <= segments; ++i) {
+            float angle = startAngle + (sweepAngle * i / segments);
+            vertices.push_back({
+                center.width + radius * cos(angle),
+                center.height + radius * sin(angle)
+            });
+        }
+
+        ccDrawSolidPoly(vertices.data(), vertices.size(), ccc4f(0, 1, 0, 0.15f));
+    }
+
+    {
+        // Draw red arc for vertical movement (up)
+        ccDrawColor4B(255, 0, 0, 100); // Set color to red with some transparency
+        auto center = getScaledContentSize() / 2; // Center of the circle
+        auto radius = getScaledContentWidth() / 2; // Radius of the circle
+        auto startAngle = M_PI / 12; // Start angle
+        auto sweepAngle = 11 * M_PI / 12 - M_PI / 12; // Sweep angle
+        int segments = 50; // Number of segments for smoothness
+
+        std::vector<CCPoint> vertices;
+        vertices.push_back(center); // Add the center point
+
+        for (int i = 0; i <= segments; ++i) {
+            float angle = startAngle + (sweepAngle * i / segments);
+            vertices.push_back({
+                center.width + radius * cos(angle),
+                center.height + radius * sin(angle)
+            });
+        }
+
+        ccDrawSolidPoly(vertices.data(), vertices.size(), ccc4f(1, 0, 0, 0.15f));
+    }
+
+    {
+        // Draw red arc for vertical movement (down)
+        ccDrawColor4B(255, 0, 0, 100); // Set color to red with some transparency
+        auto center = getScaledContentSize() / 2; // Center of the circle
+        auto radius = getScaledContentWidth() / 2; // Radius of the circle
+        auto startAngle = -11 * M_PI / 12; // Start angle
+        auto sweepAngle = -M_PI / 12 - -11 * M_PI / 12; // Sweep angle
+        int segments = 50; // Number of segments for smoothness
+
+        std::vector<CCPoint> vertices;
+        vertices.push_back(center); // Add the center point
+
+        for (int i = 0; i <= segments; ++i) {
+            float angle = startAngle + (sweepAngle * i / segments);
+            vertices.push_back({
+                center.width + radius * cos(angle),
+                center.height + radius * sin(angle)
+            });
+        }
+
+        ccDrawSolidPoly(vertices.data(), vertices.size(), ccc4f(1, 0, 0, 0.15f));
+    }
+    #endif
+}
+
+#include <Geode/modify/UILayer.hpp>
+class $modify(JSUILayer, UILayer) {
+
+    struct Fields {
+        JoystickNode *m_joystickNode;
+    };
+
+    static void onModify(auto& self) {
+        if (auto res = self.setHookPriorityBefore("UILayer::init", "geode.custom-keybinds"); res.isErr()) {
+            geode::log::warn("Failed to set hook priority: {}", res.unwrapErr());
+        }
+    }
+
+    bool init(GJBaseGameLayer *gjbgl) {
+        if (!UILayer::init(gjbgl)) return false;
+        queueInMainThread([this, gjbgl](){
+            m_fields->m_joystickNode = JoystickNode::create();
+            log::info("{}", gjbgl);
+            log::info("{}", gjbgl->m_level);
+            log::info("{}", gjbgl->m_level->m_twoPlayerMode);
+            m_fields->m_joystickNode->m_twoPlayer = gjbgl->m_level->m_twoPlayerMode;
+            addChildAtPosition(m_fields->m_joystickNode, Anchor::BottomLeft, {75, 75}, false);
+
+            fixVisibility();
+
+            // #ifndef GEODE_IS_IOS
+            // // No
+            // PlayLayer::get()->template addEventListener<keybinds::InvokeBindFilter>([=](keybinds::InvokeBindEvent* event) {
+            //     log::info("Test - Left p1");
+            //     return ListenerResult::Stop;
+            // }, "robtop.geometry-dash/move-left-p1");
+            // PlayLayer::get()->template addEventListener<keybinds::InvokeBindFilter>([=](keybinds::InvokeBindEvent* event) {
+            //     log::info("Test - Right p1");
+            //     return ListenerResult::Stop;
+            // }, "robtop.geometry-dash/move-right-p1");
+            // PlayLayer::get()->template addEventListener<keybinds::InvokeBindFilter>([=](keybinds::InvokeBindEvent* event) {
+            //     log::info("Test - Left p2");
+            //     return ListenerResult::Stop;
+            // }, "robtop.geometry-dash/move-left-p2");
+            // PlayLayer::get()->template addEventListener<keybinds::InvokeBindFilter>([=](keybinds::InvokeBindEvent* event) {
+            //     log::info("Test - Right p2");
+            //     return ListenerResult::Stop;
+            // }, "robtop.geometry-dash/move-right-p2");
+
+            // // mine
+            // PlayLayer::get()->template addEventListener<keybinds::InvokeBindFilter>([this](keybinds::InvokeBindEvent* event) {
+            //     if (auto jsLayer = static_cast<JSUILayer*>(getChildByType<UILayer>(0))) {
+            //         if (auto node = jsLayer->m_fields->m_joystickNode) {
+            //             auto old = node->m_currentInput;
+            //             if (event->isDown()) node->m_currentInput.x += 1;
+            //             else node->m_currentInput.x -= 1;
+            //             jsLayer->m_fields->m_joystickNode->handleInput(jsLayer->m_gameLayer, node->m_currentInput, old);
+            //         }
+            //     }
+            //     return ListenerResult::Stop;
+            // }, "joystick_right"_spr);
+            // PlayLayer::get()->template addEventListener<keybinds::InvokeBindFilter>([this](keybinds::InvokeBindEvent* event) {
+            //     if (auto jsLayer = static_cast<JSUILayer*>(getChildByType<UILayer>(0))) {
+            //         if (auto node = jsLayer->m_fields->m_joystickNode) {
+            //             auto old = node->m_currentInput;
+            //             if (event->isDown()) node->m_currentInput.x -= 1;
+            //             else node->m_currentInput.x += 1;
+            //             jsLayer->m_fields->m_joystickNode->handleInput(jsLayer->m_gameLayer, node->m_currentInput, old);
+            //         }
+            //     }
+            //     return ListenerResult::Stop;
+            // }, "joystick_left"_spr);
+            // PlayLayer::get()->template addEventListener<keybinds::InvokeBindFilter>([this](keybinds::InvokeBindEvent* event) {
+            //     if (auto jsLayer = static_cast<JSUILayer*>(getChildByType<UILayer>(0))) {
+            //         if (auto node = jsLayer->m_fields->m_joystickNode) {
+            //             auto old = node->m_currentInput;
+            //             if (event->isDown()) node->m_currentInput.y += 1;
+            //             else node->m_currentInput.y -= 1;
+            //             jsLayer->m_fields->m_joystickNode->handleInput(jsLayer->m_gameLayer, node->m_currentInput, old);
+            //         }
+            //     }
+            //     return ListenerResult::Stop;
+            // }, "joystick_up"_spr);
+            // PlayLayer::get()->template addEventListener<keybinds::InvokeBindFilter>([this](keybinds::InvokeBindEvent* event) {
+            //     if (auto jsLayer = static_cast<JSUILayer*>(getChildByType<UILayer>(0))) {
+            //         if (auto node = jsLayer->m_fields->m_joystickNode) {
+            //             auto old = node->m_currentInput;
+            //             if (event->isDown()) node->m_currentInput.y -= 1;
+            //             else node->m_currentInput.y += 1;
+            //             jsLayer->m_fields->m_joystickNode->handleInput(jsLayer->m_gameLayer, node->m_currentInput, old);
+            //         }
+            //     }
+            //     return ListenerResult::Stop;
+            // }, "joystick_down"_spr);
+            // #endif
+
+        });
+        return true;
+    }
+
+    void fixVisibility() {
+        if (!m_fields->m_joystickNode) {
+            return;
+        }
+        if (!fastGetSetting<"enabled", bool>() || !m_inPlatformer) {
+            m_fields->m_joystickNode->setVisible(false);
+            m_fields->m_joystickNode->setTouchEnabled(false);
+            return;
+        }
+
+        m_fields->m_joystickNode->setVisible(true);
+        m_fields->m_joystickNode->setTouchEnabled(true);    
+
+        if (auto p1move = getChildByID("platformer-p1-move-button")) {
+            p1move->setPosition({10000, 10000});
+        }
+
+        if (auto p2move = getChildByID("platformer-p2-move-button")) {
+            p2move->setPosition({10000, 10000});
+        }
+    }
+
+    // refreshDpad is inlined :pensive:
+    #if defined(GEODE_IS_WINDOWS) || defined(GEODE_IS_ARM_MAC)
+
+    void togglePlatformerMode(bool p0) {    
+        UILayer::togglePlatformerMode(p0);
+
+        fixVisibility();
+    }
+
+    #else
+
+    void refreshDpad() {
+        UILayer::refreshDpad();
+        
+        fixVisibility();
+    }
+
+    #endif
+
+    void keyDown(enumKeyCodes key) {
+        auto joystick = m_fields->m_joystickNode;
+        if (key == enumKeyCodes::KEY_A) {
+            joystick->m_currentInput.x -= 1;
+            if (enableCounters) m_gameLayer->updateCounters(3741, joystick->m_currentInput.x);
+        } else if (key == enumKeyCodes::KEY_D) {
+            joystick->m_currentInput.x += 1;
+            if (enableCounters) m_gameLayer->updateCounters(3741, joystick->m_currentInput.x);
+        } else if (key == enumKeyCodes::KEY_W) {
+            joystick->m_currentInput.y += 1;
+            if (enableCounters) m_gameLayer->updateCounters(3742, joystick->m_currentInput.y);
+        } else if (key == enumKeyCodes::KEY_S) {
+            joystick->m_currentInput.y -= 1;
+            if (enableCounters) m_gameLayer->updateCounters(3742, joystick->m_currentInput.y);
+        }
+        
+        UILayer::keyDown(key);
+    }
+
+    void keyUp(enumKeyCodes key) {
+        auto joystick = m_fields->m_joystickNode;
+        if (key == enumKeyCodes::KEY_A) {
+            joystick->m_currentInput.x += 1;
+            if (enableCounters) m_gameLayer->updateCounters(3741, joystick->m_currentInput.x);
+        } else if (key == enumKeyCodes::KEY_D) {
+            joystick->m_currentInput.x -= 1;
+            if (enableCounters) m_gameLayer->updateCounters(3741, joystick->m_currentInput.x);
+        } else if (key == enumKeyCodes::KEY_W) {
+            joystick->m_currentInput.y -= 1;
+            if (enableCounters) m_gameLayer->updateCounters(3742, joystick->m_currentInput.y);
+        } else if (key == enumKeyCodes::KEY_S) {
+            joystick->m_currentInput.y += 1;
+            if (enableCounters) m_gameLayer->updateCounters(3742, joystick->m_currentInput.y);
+        }
+        
+        UILayer::keyUp(key);
+    }
+};
+
+#if defined(GEODE_IS_WINDOWS) || defined(GEODE_IS_ARM_MAC)
+
+#include <Geode/modify/PlayLayer.hpp>
+class $modify (JSPlayLayer, PlayLayer) {
+    void resume() {
+        PlayLayer::resume();
+        if (auto layer = getChildByType<UILayer>(0)) {
+            auto jsLayer = static_cast<JSUILayer*>(layer);
+            if (jsLayer) {
+                jsLayer->fixVisibility();
+            }
+        }
+    }
+};
+
+#endif
+
+
+// #include <ninxout.options_api/include/API.hpp>
+
+// $on_mod(Loaded) {
+//     OptionsAPI::addPreLevelSetting<bool>(
+//         "Platformer Joystick",
+//         "enable"_spr,
+//         [](GJGameLevel *level) {
+//             auto key = fmt::format("joystick-on-{}", level->m_levelID);
+//             Mod::get()->setSavedValue<bool>(key, !Mod::get()->getSavedValue<bool>(key, true));
+//         },
+//         [](GJGameLevel *level) {
+//             return Mod::get()->getSavedValue<bool>(fmt::format("joystick-on-{}", level->m_levelID), true);
+//         },
+//         "Enables the joystick in this level. (Platformer only)"
+//     );
+//     OptionsAPI::addMidLevelSetting<bool>(
+//         "Platformer Joystick (Global)",
+//         "enable"_spr,
+//         [](GJBaseGameLayer*) { Mod::get()->setSettingValue<bool>("enabled", !fastGetSetting<"enabled", bool>()); },
+//         [](GJBaseGameLayer*) { return fastGetSetting<"enabled", bool>(); },
+//         "Enables the joystick in platformer levels."
+//     );
+// }
