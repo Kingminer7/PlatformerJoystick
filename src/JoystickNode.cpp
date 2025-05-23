@@ -76,6 +76,13 @@ void runChecks(CCArray *objects) {
     }
 }
 
+void updateVal(GJBaseGameLayer *layer, int id, int val) {
+    if (enableCounters) {
+        layer->m_effectManager->updateCountForItem(id, val);
+        layer->updateCounters(id, val);
+    }
+}
+
 class $modify(JSPL, PlayLayer) {
     struct Fields {
         bool m_hasPaused = false;
@@ -83,12 +90,12 @@ class $modify(JSPL, PlayLayer) {
     void setupHasCompleted() {
         runChecks(m_objects);
         PlayLayer::setupHasCompleted();
-        if (enableCounters) updateCounters(3740, 1);
+        updateVal(this, 3740, 1);
     }
 
     void resetLevel() {
         PlayLayer::resetLevel();
-        if (enableCounters) updateCounters(3740, 1);
+        updateVal(this, 3740, 1);
     }
 };
 
@@ -96,7 +103,7 @@ class $modify(JSLEL, LevelEditorLayer) {
     void onPlaytest() {
         runChecks(m_objects);
         LevelEditorLayer::onPlaytest();
-        if (enableCounters) updateCounters(3740, 1);
+        updateVal(this, 3740, 1);
     }
 };
 
@@ -160,14 +167,14 @@ void JoystickNode::handleInput(GJBaseGameLayer *layer, CCPoint input, CCPoint ol
     } else if (input.x == -1) {
         layer->queueButton(2, true, false);
     }
-    if (enableCounters) layer->updateCounters(3741, input.x);
+    updateVal(layer, 3741, input.x);
     if (!fastGetSetting<"disable-updown", bool>() || m_twoPlayer) {
         if (input.y == 1) {
             layer->queueButton(3, true, true);
         } else if (input.y == -1) {
             layer->queueButton(2, true, true);
         }
-        if (enableCounters) layer->updateCounters(3742, input.y);
+        updateVal(layer, 3742, input.y);
     }
 }
 
