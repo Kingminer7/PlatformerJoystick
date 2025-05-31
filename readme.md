@@ -2,7 +2,7 @@
 
 Adds a way for level creators to have joystick controls.
 
-## How it wworke
+## How it works
 Joystick input is managed with player 1 and player 2 controls.
 - Left and right control player 1
 - Up and down control player 2
