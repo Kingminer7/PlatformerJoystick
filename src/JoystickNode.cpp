@@ -154,13 +154,13 @@ void JoystickNode::handleInput(GJBaseGameLayer *layer, CCPoint input, CCPoint ol
     } else if (old.x == -1) {
         layer->queueButton(2, false, false);
     }
-    if (!fastGetSetting<"disable-updown", bool>() || m_twoPlayer) {
+    //if (!fastGetSetting<"disable-updown", bool>() || m_twoPlayer) {
         if (old.y == 1) {
             layer->queueButton(3, false, true);
         } else if (old.y == -1) { 
             layer->queueButton(2, false, true);
         }
-    }
+    //}
 
     if (input.x == 1) {
         layer->queueButton(3, true, false);
@@ -168,14 +168,14 @@ void JoystickNode::handleInput(GJBaseGameLayer *layer, CCPoint input, CCPoint ol
         layer->queueButton(2, true, false);
     }
     updateVal(layer, 3741, input.x);
-    if (!fastGetSetting<"disable-updown", bool>() || m_twoPlayer) {
+    //if (!fastGetSetting<"disable-updown", bool>() || m_twoPlayer) {
         if (input.y == 1) {
             layer->queueButton(3, true, true);
         } else if (input.y == -1) {
             layer->queueButton(2, true, true);
         }
         updateVal(layer, 3742, input.y);
-    }
+    //}
 }
 
 void JoystickNode::ccTouchEnded(CCTouch *touch, CCEvent *event) {
@@ -448,16 +448,16 @@ class $modify(JSUILayer, UILayer) {
         }
     }
 
-    // // refreshDpad is inlined :pensive:
-    // #if defined(GEODE_IS_WINDOWS) || defined(GEODE_IS_ARM_MAC)
+    // refreshDpad is inlined :pensive:
+    #if defined(GEODE_IS_WINDOWS) || defined(GEODE_IS_ARM_MAC)
 
-    // void togglePlatformerMode(bool p0) {    
-    //     UILayer::togglePlatformerMode(p0);
+    void togglePlatformerMode(bool p0) {
+        UILayer::togglePlatformerMode(p0);
 
-    //     fixVisibility();
-    // }
+        fixVisibility();
+    }
 
-    // #else
+    #else
 
     void refreshDpad() {
         UILayer::refreshDpad();
@@ -465,7 +465,7 @@ class $modify(JSUILayer, UILayer) {
         fixVisibility();
     }
 
-    // #endif
+    #endif
 };
 
 #if defined(GEODE_IS_WINDOWS) || defined(GEODE_IS_ARM_MAC)

@@ -1,27 +1,15 @@
 {
-	"geode": "4.4.0",
+	"geode": "4.5.0",
 	"gd": {
 		"android": "2.2074",
 		"ios": "2.2074"
 	},
 	"id": "km7dev.platformerjoystick",
 	"name": "Platformer Joystick",
-	"version": "v1.0.0-alpha.2",
+	"version": "v1.0.0-beta.1",
 	"developer": "km7dev",
 	"description": "Adds a joystick to platformer mode.",
 	"dependencies": {
-		"geode.node-ids": "1.20.0",
-		"ninxout.options_api": {
-			"importance": "recommended",
-			"version": "1.0.0"
-		}
-	},
-	"settings": {
-		"disable-updown": {
-			"type": "bool",
-			"name": "Vertical in 1 Player Mode",
-			"description": "Disables the vertical input while in 1 player mode, as they're registered as left and right.",
-			"default": true
-		}
+		"geode.node-ids": "1.20.0"
 	}
 }
