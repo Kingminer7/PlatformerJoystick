@@ -77,7 +77,7 @@ void runChecks(CCArray *objects) {
 }
 
 void updateVal(GJBaseGameLayer *layer, int id, int val) {
-    if (enableCounters) {
+    if (enableCounters && enableJoystick) {
         layer->m_effectManager->updateCountForItem(id, val);
         layer->updateCounters(id, val);
     }
@@ -157,7 +157,7 @@ void JoystickNode::handleInput(GJBaseGameLayer *layer, CCPoint input, CCPoint ol
     //if (!fastGetSetting<"disable-updown", bool>() || m_twoPlayer) {
         if (old.y == 1) {
             layer->queueButton(3, false, true);
-        } else if (old.y == -1) { 
+        } else if (old.y == -1) {
             layer->queueButton(2, false, true);
         }
     //}
