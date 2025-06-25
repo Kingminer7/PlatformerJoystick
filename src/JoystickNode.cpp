@@ -4,6 +4,47 @@
 #include <Geode/modify/PlayLayer.hpp>
 #include <Geode/modify/LevelEditorLayer.hpp>
 
+#ifdef GEODE_IS_DESKTOP
+#include <geode.custom-keybinds/include/Keybinds.hpp>
+#include <Geode/loader/GameEvent.hpp>
+
+$on_mod(Loaded) {
+    auto mgr = keybinds::BindManager::get();
+    mgr->registerBindable({
+        "joystick_up"_spr,
+        "Joystick Up",
+        "Up for joystick",
+        { 
+            keybinds::Keybind::create(KEY_W, keybinds::Modifier::None),
+            keybinds::ControllerBind::create(CONTROLLER_LTHUMBSTICK_UP),
+            keybinds::Keybind::create(KEY_ArrowUp, keybinds::Modifier::None),
+        },
+        "Joystick"
+    });
+    mgr->registerBindable({
+        "joystick_down"_spr,
+        "Joystick Down",
+        "Down for joystick",
+        { 
+            keybinds::Keybind::create(KEY_S, keybinds::Modifier::None),
+            keybinds::ControllerBind::create(CONTROLLER_LTHUMBSTICK_DOWN),
+            keybinds::Keybind::create(KEY_ArrowDown, keybinds::Modifier::None),
+        },
+        "Joystick"
+    });
+    mgr->registerBindable({
+        "joystick_jump"_spr,
+        "Jump (while joystick enabled)",
+        "Jump for when joystick is enabled, as normal binds conflict",
+        { 
+            keybinds::Keybind::create(KEY_Space, keybinds::Modifier::None),
+            keybinds::ControllerBind::create(CONTROLLER_A),
+        },
+        "Joystick"
+    });
+}
+#endif
+
 bool enableJoystick = false;
 
 void runChecks(CCArray *objects) {
@@ -264,6 +305,12 @@ class $modify(JSUILayer, UILayer) {
         JoystickNode *m_joystickNode;
     };
 
+    static void onModify(auto& self) {
+        if (auto res = self.setHookPriorityBefore("UILayer::init", "geode.custom-keybinds"); res.isErr()) {
+            geode::log::warn("Failed to set hook priority: {}", res.unwrapErr());
+        }
+    }
+
     bool init(GJBaseGameLayer *gjbgl) {
         if (!UILayer::init(gjbgl)) return false;
         queueInMainThread([this, gjbgl](){
@@ -273,6 +320,71 @@ class $modify(JSUILayer, UILayer) {
 
             fixVisibility();
         });
+        #ifdef GEODE_IS_DESKTOP
+        // ck binds
+        PlayLayer::get()->template addEventListener<keybinds::InvokeBindFilter>([this](keybinds::InvokeBindEvent* event) {
+            if (!enableJoystick) return ListenerResult::Propagate;
+            if (auto jsLayer = static_cast<JSUILayer*>(getChildByType<UILayer>(0))) {
+                if (auto node = jsLayer->m_fields->m_joystickNode) {
+                    auto old = node->m_currentInput;
+                    if (event->isDown()) node->m_currentInput.x -= 1;
+                    else node->m_currentInput.x += 1;
+                    jsLayer->m_fields->m_joystickNode->handleInput(jsLayer->m_gameLayer, node->m_currentInput, old);
+                }
+            }
+            return ListenerResult::Stop;
+        }, "robtop.geometry-dash/move-left-p1");
+        log::info("H");
+        PlayLayer::get()->template addEventListener<keybinds::InvokeBindFilter>([=](keybinds::InvokeBindEvent* event) {
+            if (!enableJoystick) return ListenerResult::Propagate;
+            if (auto jsLayer = static_cast<JSUILayer*>(getChildByType<UILayer>(0))) {
+                if (auto node = jsLayer->m_fields->m_joystickNode) {
+                    auto old = node->m_currentInput;
+                    if (event->isDown()) node->m_currentInput.x += 1;
+                    else node->m_currentInput.x -= 1;
+                    jsLayer->m_fields->m_joystickNode->handleInput(jsLayer->m_gameLayer, node->m_currentInput, old);
+                }
+            }
+            return ListenerResult::Stop;
+        }, "robtop.geometry-dash/move-right-p1");
+        PlayLayer::get()->template addEventListener<keybinds::InvokeBindFilter>([=](keybinds::InvokeBindEvent* event) {
+            if (enableJoystick) return ListenerResult::Stop;
+            return ListenerResult::Propagate;
+        }, "robtop.geometry-dash/move-jump-p1");
+
+        // mine
+        PlayLayer::get()->template addEventListener<keybinds::InvokeBindFilter>([this](keybinds::InvokeBindEvent* event) {
+            if (!enableJoystick) return ListenerResult::Propagate;
+            if (auto jsLayer = static_cast<JSUILayer*>(getChildByType<UILayer>(0))) {
+                if (auto node = jsLayer->m_fields->m_joystickNode) {
+                    auto old = node->m_currentInput;
+                    if (event->isDown()) node->m_currentInput.y += 1;
+                    else node->m_currentInput.y -= 1;
+                    jsLayer->m_fields->m_joystickNode->handleInput(jsLayer->m_gameLayer, node->m_currentInput, old);
+                }
+            }
+            return ListenerResult::Stop;
+        }, "joystick_up"_spr);
+        PlayLayer::get()->template addEventListener<keybinds::InvokeBindFilter>([this](keybinds::InvokeBindEvent* event) {
+            if (!enableJoystick) return ListenerResult::Propagate;
+            if (auto jsLayer = static_cast<JSUILayer*>(getChildByType<UILayer>(0))) {
+                if (auto node = jsLayer->m_fields->m_joystickNode) {
+                    auto old = node->m_currentInput;
+                    if (event->isDown()) node->m_currentInput.y -= 1;
+                    else node->m_currentInput.y += 1;
+                    jsLayer->m_fields->m_joystickNode->handleInput(jsLayer->m_gameLayer, node->m_currentInput, old);
+                }
+            }
+            return ListenerResult::Stop;
+        }, "joystick_down"_spr);
+        PlayLayer::get()->template addEventListener<keybinds::InvokeBindFilter>([this](keybinds::InvokeBindEvent* event) {
+            if (!enableJoystick) return ListenerResult::Propagate;
+            if (auto jsLayer = static_cast<JSUILayer*>(getChildByType<UILayer>(0))) {
+                jsLayer->m_gameLayer->queueButton(1, event->isDown(), false);
+            }
+            return ListenerResult::Stop;
+        }, "joystick_jump"_spr);
+        #endif
         return true;
     }
 
