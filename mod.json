@@ -12,6 +12,6 @@
 	"developer": "km7dev",
 	"description": "Adds a joystick to platformer mode.",
 	"dependencies": {
-		"geode.node-ids": "*"
+		"geode.node-ids": "1.20.1"
 	}
 }
