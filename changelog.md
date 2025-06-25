@@ -1,4 +1,2 @@
-# 1.0.0 alpha 2
-- rework stuff
-# 1.0.0 alpha 1
-- functionality
+# 1.0.0
+- Initial Release
