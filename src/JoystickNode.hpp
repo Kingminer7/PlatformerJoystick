@@ -19,6 +19,7 @@ class JoystickNode : public CCMenu {
     public:
         static JoystickNode *create();
         void handleInput(GJBaseGameLayer *layer, CCPoint input, CCPoint old);
+        void fakePosition();
         
         bool m_twoPlayer = false;
         CCPoint m_currentInput = {0, 0};
