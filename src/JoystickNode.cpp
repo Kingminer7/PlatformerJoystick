@@ -112,14 +112,6 @@ void updateVal(GJBaseGameLayer *layer, int id, int val) {
     }
 }
 
-class $modify(JSLEL, LevelEditorLayer) {
-    void onPlaytest() {
-        runChecks(m_objects);
-        LevelEditorLayer::onPlaytest();
-        updateVal(this, 3740, 1);
-    }
-};
-
 bool JoystickNode::init() {
     if (!CCMenu::init()) return false;
     setContentSize({100, 100});
@@ -476,37 +468,40 @@ class $modify(JSUILayer, UILayer) {
     #endif
 };
 
+class $modify(JSLEL, LevelEditorLayer) {
+    void onPlaytest() {
+        runChecks(m_objects);
+        LevelEditorLayer::onPlaytest();
+        if (auto jsLayer = static_cast<JSUILayer*>(m_uiLayer)) {
+            jsLayer->fixVisibility();
+        }
+        updateVal(this, 3740, 1);
+    }
+};
+
+
 class $modify(JSPL, PlayLayer) {
     void setupHasCompleted() {
         runChecks(m_objects);
         PlayLayer::setupHasCompleted();
         updateVal(this, 3740, 1);
-        if (auto layer = getChildByType<UILayer>(0)) {
-            auto jsLayer = static_cast<JSUILayer*>(layer);
-            if (jsLayer) {
-                jsLayer->fixVisibility();
-            }
+        if (auto jsLayer = static_cast<JSUILayer*>(m_uiLayer)) {
+            jsLayer->fixVisibility();
         }
     }
 
     void resetLevel() {
         PlayLayer::resetLevel();
         updateVal(this, 3740, 1);
-        if (auto layer = getChildByType<UILayer>(0)) {
-            auto jsLayer = static_cast<JSUILayer*>(layer);
-            if (jsLayer) {
-                jsLayer->fixVisibility();
-            }
+        if (auto jsLayer = static_cast<JSUILayer*>(m_uiLayer)) {
+            jsLayer->fixVisibility();
         }
     }
     #if defined(GEODE_IS_WINDOWS) || defined(GEODE_IS_ARM_MAC)
     void resume() {
         PlayLayer::resume();
-        if (auto layer = getChildByType<UILayer>(0)) {
-            auto jsLayer = static_cast<JSUILayer*>(layer);
-            if (jsLayer) {
-                jsLayer->fixVisibility();
-            }
+        if (auto jsLayer = static_cast<JSUILayer*>(m_uiLayer)) {
+            jsLayer->fixVisibility();
         }
     }
     #endif
