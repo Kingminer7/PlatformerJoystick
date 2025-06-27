@@ -8,7 +8,7 @@
 	},
 	"id": "km7dev.platformerjoystick",
 	"name": "Platformer Joystick",
-	"version": "v1.0.0",
+	"version": "v1.0.1",
 	"developer": "km7dev",
 	"description": "Adds a joystick to platformer mode.",
 	"dependencies": {
@@ -18,5 +18,19 @@
 			"importance": "required",
 			"platforms": ["win", "mac"]
 		}
-	}
+	},
+    "links": {
+        "source": "https://github.com/kingminer7/audiooffsetcalculator",
+        "community": "https://discord.gg/Vj5Mcennph",
+        "homepage": "https://km7dev.tech"
+    },
+    "issues": {
+        "info": "Report issues in my Discord server.",
+        "url": "https://discord.gg/Vj5Mcennph"
+    },
+    "tags": [
+        "editor",
+        "enhancement",
+        "gameplay"
+    ]
 }
