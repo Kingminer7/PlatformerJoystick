@@ -8,7 +8,7 @@
 	},
 	"id": "km7dev.platformerjoystick",
 	"name": "Platformer Joystick",
-	"version": "v1.0.2",
+	"version": "v1.0.3",
 	"developer": "km7dev",
 	"description": "Adds a joystick to platformer mode.",
 	"dependencies": {

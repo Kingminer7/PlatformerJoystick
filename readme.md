@@ -8,7 +8,7 @@ Adds a way for level creators to add joystick controls.
 - Up and down are their own keybinds, but the up keybind will most likely conflict with a jump bind. ***Make sure to change your jump bind!***
 
 ## How it works
-Levels can enable joysticks by including a text object that says `--enable-joystick`. I recommend setting it to hidden.
+Creators can enable joysticks by including a text object that says `--enable-joystick`. I recommend setting it to hidden. There's also a checkbox in the level settings that does this for you,
 - Note: iOS users may need to disable smart punctuation, since trying to type `--` ends up deleting the 2 dashes because iOS attempts to replace two dashes with an em dash.
 
 When joysticks are enabled, you can use the following ids for detection
