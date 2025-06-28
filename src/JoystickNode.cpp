@@ -5,6 +5,7 @@
 #include <Geode/modify/PlayLayer.hpp>
 #include <Geode/modify/LevelEditorLayer.hpp>
 #include <Geode/modify/UILayer.hpp>
+#include <Geode/modify/LevelSettingsLayer.hpp>
 
 #ifdef GEODE_IS_DESKTOP
 #include <geode.custom-keybinds/include/Keybinds.hpp>
@@ -48,7 +49,7 @@ void runChecks(CCArray *objects) {
         if (obj->m_objectID == 914) {
             if (auto txt = static_cast<TextGameObject*>(obj)) {
                 if (txt->m_text == "--enable-joystick") 
-                    enableJoystick = true;;
+                    enableJoystick = true;
             } 
         }
     }
@@ -521,6 +522,9 @@ class $modify(JSLEL, LevelEditorLayer) {
         LevelEditorLayer::onPlaytest();
         if (auto jsLayer = static_cast<JSUILayer*>(m_uiLayer)) {
             jsLayer->fixVisibility();
+            if (auto node = jsLayer->m_fields->m_joystickNode) {
+                node->m_currentInput = CCPoint{0, 0};
+            }
         }
         updateVal(this, 3740, 1);
     }
@@ -552,4 +556,57 @@ class $modify(JSPL, PlayLayer) {
         }
     }
     #endif
+};
+
+class $modify(LTLSL, LevelSettingsLayer) {
+    
+    struct Fields {
+        TextGameObject* m_obj = nullptr;
+        CCMenuItemToggler* m_toggle;
+    };
+
+    bool init(LevelSettingsObject* settings, LevelEditorLayer* editor) {
+        if (!LevelSettingsLayer::init(settings, editor)) return false;
+
+        for (auto obj : CCArrayExt<GameObject*>(editor->m_objects)) {
+            if (auto txt = static_cast<TextGameObject*>(obj)) {
+                if (txt->m_text == "--enable-joystick") {
+                    m_fields->m_obj = txt;
+                }
+            } 
+        }
+
+        CCMenuItemToggler* toggler = CCMenuItemExt::createTogglerWithStandardSprites(.7f, [this, editor](auto){
+            if (m_fields->m_obj) {
+                editor->m_editorUI->deselectObject(m_fields->m_obj);
+                editor->m_editorUI->deleteObject(m_fields->m_obj, true);
+                m_fields->m_obj = nullptr;
+            } else {
+                TextGameObject* obj = static_cast<TextGameObject*>(editor->m_editorUI->createObject(914, {0, 0}));
+                obj->m_isHide = true;
+                obj->updateTextObject("--enable-joystick", false);
+                m_fields->m_obj = obj;
+            }
+        });
+        toggler->toggle(m_fields->m_obj != nullptr);
+        toggler->setCascadeOpacityEnabled(true);
+        toggler->setEnabled(m_settingsObject->m_platformerMode);
+        toggler->setOpacity(m_settingsObject->m_platformerMode ? 255 : 100);
+        m_buttonMenu->addChildAtPosition(toggler, Anchor::BottomLeft, {-185, -120}, false);
+        m_fields->m_toggle = toggler;
+        CCLabelBMFont* lab = CCLabelBMFont::create("Joystick:", "goldFont.fnt");
+        lab->setScale(.6f);
+        m_mainLayer->addChildAtPosition(lab, Anchor::Center, {-185, -95}, false);
+        return true;
+    }
+
+    void updateGameplayModeButtons() {
+        LevelSettingsLayer::updateGameplayModeButtons();
+        auto toggler = m_fields->m_toggle;
+        if (!toggler) return;
+        auto editor = m_editorLayer;
+        toggler->setEnabled(m_settingsObject->m_platformerMode);
+        toggler->setOpacity(m_settingsObject->m_platformerMode ? 255 : 100);
+    }
+    
 };
