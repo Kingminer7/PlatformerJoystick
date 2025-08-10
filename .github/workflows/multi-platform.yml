@@ -24,8 +24,12 @@ jobs:
       matrix:
         config:
         - name: Windows
+          # this does linux to windows cross comp
           os: ubuntu-latest
           target: Win64
+          # if you don't want cross comp replace it with this
+          # os: windows-latest
+          # target isnt necessary if os is windows
 
         - name: macOS
           os: macos-latest
@@ -44,6 +48,7 @@ jobs:
 
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
+    continue-on-error: ${{ github.event.inputs.build_type != 'release' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -53,9 +58,10 @@ jobs:
       - name: Build the mod
         uses: hiimjasmine00/build-geode-mod@xwin
         with:
-          bindings: kingminer7/bindings
+          bindings: geode-sdk/bindings
+          bindings-ref: main
           combine: true
-          build-config: ${{ github.event.inputs.build_type != 'release' && 'RelWithDebInfo' || 'Release' }}
+          build-config: ${{ github.event.inputs.build_type != 'release' && (matrix.arget == 'Win64' && 'RelWithDebInfo' || 'Debug') || 'Release' }}
           export-pdb: true
           export-symbols: true
           target: ${{ matrix.config.target }}
