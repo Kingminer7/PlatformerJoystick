@@ -54,7 +54,6 @@ jobs:
         uses: hiimjasmine00/build-geode-mod@xwin
         with:
           bindings: kingminer7/bindings
-          bindings-ref: patch-2
           combine: true
           build-config: ${{ github.event.inputs.build_type != 'release' && 'RelWithDebInfo' || 'Release' }}
           export-pdb: true
