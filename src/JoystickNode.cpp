@@ -579,7 +579,7 @@ class $modify(LTLSL, LevelSettingsLayer) {
         CCMenuItemToggler* toggler = CCMenuItemExt::createTogglerWithStandardSprites(.7f, [this, editor](auto){
             if (m_fields->m_obj) {
                 editor->m_editorUI->deselectObject(m_fields->m_obj);
-                editor->m_editorUI->deleteObject(m_fields->m_obj, true);
+                editor->m_editorUI->deleteObject(m_fields->m_obj, false);
                 m_fields->m_obj = nullptr;
             } else {
                 TextGameObject* obj = static_cast<TextGameObject*>(editor->m_editorUI->createObject(914, {0, 0}));
