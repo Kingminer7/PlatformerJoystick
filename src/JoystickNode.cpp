@@ -518,6 +518,7 @@ class $modify(JSUILayer, UILayer) {
 
 class $modify(JSLEL, LevelEditorLayer) {
     void onPlaytest() {
+        if (!m_objects) return LevelEditorLayer::onPlaytest();
         runChecks(m_objects);
         LevelEditorLayer::onPlaytest();
         if (auto jsLayer = static_cast<JSUILayer*>(m_uiLayer)) {
@@ -533,6 +534,7 @@ class $modify(JSLEL, LevelEditorLayer) {
 
 class $modify(JSPL, PlayLayer) {
     void setupHasCompleted() {
+        if (!m_objects) return PlayLayer::setupHasCompleted();
         runChecks(m_objects);
         PlayLayer::setupHasCompleted();
         updateVal(this, 3740, 1);
@@ -567,6 +569,7 @@ class $modify(LTLSL, LevelSettingsLayer) {
 
     bool init(LevelSettingsObject* settings, LevelEditorLayer* editor) {
         if (!LevelSettingsLayer::init(settings, editor)) return false;
+        if (!editor || !editor->m_objects) return true;
 
         for (auto obj : CCArrayExt<GameObject*>(editor->m_objects)) {
             if (auto txt = static_cast<TextGameObject*>(obj)) {
