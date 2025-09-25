@@ -47,7 +47,7 @@ void runChecks(CCArray *objects) {
     enableJoystick = false;
     for (auto obj : CCArrayExt<GameObject*>(objects)) {
         if (obj->m_objectID == 914) {
-            if (auto txt = typeinfo_cast<TextGameObject*>(obj)) {
+            if (auto txt = static_cast<TextGameObject*>(obj)) {
                 if (txt->m_text == "--enable-joystick") 
                     enableJoystick = true;
             } 
@@ -572,9 +572,11 @@ class $modify(LTLSL, LevelSettingsLayer) {
         if (!editor || !editor->m_objects) return true;
 
         for (auto obj : CCArrayExt<GameObject*>(editor->m_objects)) {
-            if (auto txt = typeinfo_cast<TextGameObject*>(obj)) {
-                if (txt->m_text == "--enable-joystick") {
-                    m_fields->m_obj = txt;
+            if (obj->m_objectID == 914) {
+                if (auto txt = static_cast<TextGameObject*>(obj)) {
+                    if (txt->m_text == "--enable-joystick") {
+                        m_fields->m_obj = txt;
+                    }
                 }
             } 
         }
