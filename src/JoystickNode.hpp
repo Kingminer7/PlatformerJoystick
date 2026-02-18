@@ -4,23 +4,23 @@
 
 using namespace geode::prelude;
 
-class JoystickNode : public CCMenu {
+class JoystickNode : public CCNode, CCTouchDelegate {
     protected:
         bool init() override;
+        void onEnter() override;
+        void onExit() override;
+        void draw() override;
 
         bool ccTouchBegan(CCTouch *touch, CCEvent *event) override;
         void ccTouchEnded(CCTouch *touch, CCEvent *event) override;
         void ccTouchMoved(CCTouch *touch, CCEvent *event) override;
         void ccTouchCancelled(CCTouch *touch, CCEvent *event) override;
 
-        void draw() override;
-        void registerWithTouchDispatcher() override;
-
         CCSprite *m_bg = nullptr;
         CCSprite *m_center = nullptr;
     public:
         static JoystickNode *create();
-        void handleInput(GJBaseGameLayer *layer, CCPoint input, CCPoint old);
+        void handleInput(GJBaseGameLayer *layer, const CCPoint& input, const CCPoint& old, double stamp) const;
         void fakePosition();
         
         bool m_twoPlayer = false;
