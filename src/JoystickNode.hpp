@@ -4,11 +4,9 @@
 
 using namespace geode::prelude;
 
-class JoystickNode : public CCNode, CCTouchDelegate {
+class JoystickNode : public CCMenu {
     protected:
         bool init() override;
-        void onEnter() override;
-        void onExit() override;
         void draw() override;
 
         bool ccTouchBegan(CCTouch *touch, CCEvent *event) override;

@@ -28,7 +28,7 @@ void updateVal(GJBaseGameLayer *layer, const int id, const int val) {
 }
 
 bool JoystickNode::init() {
-    if (!CCNode::init()) return false;
+    if (!CCMenu::init()) return false;
     setContentSize({100, 100});
     setAnchorPoint({.5, .5});
 
@@ -172,20 +172,8 @@ void JoystickNode::ccTouchCancelled(CCTouch *touch, CCEvent *event) {
     ccTouchEnded(touch, event);
 }
 
-void JoystickNode::onEnter()
-{
-    CCNode::onEnter();
-    CCTouchDispatcher::get()->addTargetedDelegate(this, -512, true);
-}
-
-void JoystickNode::onExit()
-{
-    CCTouchDispatcher::get()->removeDelegate(this);
-    CCNode::onExit();
-}
-
 void JoystickNode::draw() {
-    CCNode::draw();
+    CCMenu::draw();
 
     #if defined(DEBUG_BUILD) && !defined(GITHUB_ACTIONS)
     {
@@ -388,7 +376,7 @@ class $modify(JSLEL, LevelEditorLayer) {
         if (!m_objects) return LevelEditorLayer::onPlaytest();
         runChecks(m_objects);
         LevelEditorLayer::onPlaytest();
-        if (auto jsLayer = reinterpret_cast<JSUILayer*>(m_uiLayer)) {
+        if (auto jsLayer = static_cast<JSUILayer*>(m_uiLayer)) {
             jsLayer->fixVisibility();
             if (auto node = jsLayer->m_fields->m_joystickNode) {
                 node->m_currentInput = CCPoint{0, 0};
@@ -408,7 +396,7 @@ class $modify(JSPL, PlayLayer) {
         runChecks(m_objects);
         PlayLayer::setupHasCompleted();
         updateVal(this, 3740, 1);
-        if (auto jsLayer = reinterpret_cast<JSUILayer*>(m_uiLayer)) {
+        if (auto jsLayer = static_cast<JSUILayer*>(m_uiLayer)) {
             jsLayer->fixVisibility();
         }
     }
@@ -416,14 +404,14 @@ class $modify(JSPL, PlayLayer) {
     void resetLevel() {
         PlayLayer::resetLevel();
         updateVal(this, 3740, 1);
-        if (auto jsLayer = reinterpret_cast<JSUILayer*>(m_uiLayer)) {
+        if (auto jsLayer = static_cast<JSUILayer*>(m_uiLayer)) {
             jsLayer->fixVisibility();
         }
     }
     #if defined(GEODE_IS_WINDOWS) || defined(GEODE_IS_ARM_MAC)
     void resume() {
         PlayLayer::resume();
-        if (auto jsLayer = reinterpret_cast<JSUILayer*>(m_uiLayer)) {
+        if (auto jsLayer = static_cast<JSUILayer*>(m_uiLayer)) {
             jsLayer->fixVisibility();
         }
     }
@@ -481,6 +469,16 @@ class $modify(LTLSL, LevelSettingsLayer) {
         toggler->setEnabled(m_settingsObject->m_platformerMode);
         toggler->setOpacity(m_settingsObject->m_platformerMode ? 255 : 100);
     }
+
+    #ifdef GEODE_IS_MACOS
+    void onGameplayMode(CCObject* sender) {
+        LevelSettingsLayer::onGameplayMode(sender);
+        auto toggler = m_fields->m_toggle;
+        if (!toggler) return;
+        toggler->setEnabled(m_settingsObject->m_platformerMode);
+        toggler->setOpacity(m_settingsObject->m_platformerMode ? 255 : 100);
+    }
+    #endif
     
 };
 
