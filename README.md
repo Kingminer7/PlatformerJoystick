@@ -1,0 +1,26 @@
+# Platformer Joystick
+
+![Mod Version](https://api.geode-sdk.org/v1/mods/km7dev.platformerjoystick/status_badge?stat=version)
+![Downloads](https://api.geode-sdk.org/v1/mods/km7dev.platformerjoystick/status_badge?stat=downloads)
+![GD Version](https://api.geode-sdk.org/v1/mods/km7dev.platformerjoystick/status_badge?stat=gd_version)
+![Geode Version](https://api.geode-sdk.org/v1/mods/km7dev.platformerjoystick/status_badge?stat=geode_version)
+
+Adds a way for level creators to add joystick controls.
+
+### Warning for keybinds users:
+
+- The defaults may conflict with your jump keybind, make sure to have a jump keybind other than W when playing joystick based levels!
+
+## How it works
+
+Creators can enable joysticks by including a text object that says `--enable-joystick`. I recommend setting it to hidden. There's also a checkbox in the level settings that does this for you,
+
+- Note: iOS users may need to disable smart punctuation, since trying to type `--` ends up deleting the 2 dashes because iOS attempts to replace two dashes with an em dash.
+
+When joysticks are enabled, you can use the following ids for detection
+
+- Item id 3740: 1 if the mod is enabled and the previously mentioned text object is in the level.
+- Item id 3741: Left and right for the joystick
+- Item id 3742: Up and down for the joystick
+
+The joystick also moves player 1 left and right.

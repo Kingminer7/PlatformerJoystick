@@ -17,13 +17,7 @@
 		"geode.node-ids": ">=1.22.0"
 	},
     "links": {
-        "source": "https://github.com/kingminer7/platformerjoystick",
-        "community": "https://discord.gg/Vj5Mcennph",
-        "homepage": "https://km7dev.tech"
-    },
-    "issues": {
-        "info": "Report issues in my Discord server.",
-        "url": "https://discord.gg/Vj5Mcennph"
+        "source": "https://github.com/kingminer7/platformerjoystick"
     },
     "tags": [
         "editor",
