@@ -7,21 +7,23 @@
 #include <Geode/modify/LevelSettingsLayer.hpp>
 #include <Geode/modify/PlayerObject.hpp>
 
+bool enableTriggers = false;
 bool enableJoystick = false;
 
 void runChecks(CCArray *objects) {
-    enableJoystick = false;
+    enableTriggers = false;
     for (auto obj : CCArrayExt<GameObject*>(objects)) {
         if (obj->m_objectID == 914) {
             if (static_cast<TextGameObject*>(obj)->m_text == "--enable-joystick") {
-                enableJoystick = true;
+                enableTriggers = true;
             }
         }
     }
+    enableJoystick = getSettingFast<"global", bool>() || enableTriggers;
 }
 
 void updateVal(GJBaseGameLayer *layer, const int id, const int val) {
-    if (enableJoystick) {
+    if (enableTriggers) {
         layer->m_effectManager->updateCountForItem(id, val);
         layer->updateCounters(id, val);
     }
@@ -486,7 +488,7 @@ class $modify(JSPO, PlayerObject) {
     void disablePlayerControls() {
         PlayerObject::disablePlayerControls();
         if (m_gameLayer->m_player1 != this) return;
-        if (!enableJoystick || !UILayer::get()) return;
+        if (!enableTriggers || !UILayer::get()) return;
         updateVal(m_gameLayer, 3741, 0);
         updateVal(m_gameLayer, 3742, 0);
     }
@@ -494,7 +496,7 @@ class $modify(JSPO, PlayerObject) {
     void enablePlayerControls() {
         PlayerObject::enablePlayerControls();
         if (m_gameLayer->m_player1 != this) return;
-        if (!enableJoystick || !UILayer::get()) return;
+        if (!enableTriggers || !UILayer::get()) return;
         auto js = UILayer::get()->getChildByType<JoystickNode>(0);
         if (!js) return;
         updateVal(m_gameLayer, 3741, js->m_currentInput.x);

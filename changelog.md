@@ -1,3 +1,7 @@
+# 1.0.8
+
+- Make the joystick globally available via a setting
+
 # 1.0.7
 
 - Update to Geode v5 / GD 2.2081

@@ -1,5 +1,5 @@
 {
-	"geode": "5.0.0-beta.3",
+	"geode": "5.6.1",
 	"gd": {
 		"win": "2.2081",
 		"mac": "2.2081",
@@ -8,7 +8,7 @@
 	},
 	"id": "km7dev.platformerjoystick",
 	"name": "Platformer Joystick",
-	"version": "v1.0.7",
+	"version": "v1.0.8",
 	"developer": "km7dev",
     "early-load": true,
 	"load-priority": -309,
@@ -52,6 +52,12 @@
 			"default": ["D", "Controller_LTHUMBSTICK_RIGHT"],
 			"priority":  -100,
 			"category": "gameplay"
+		},
+		"global": {
+			"type": "bool",
+			"name": "Enable Globally",
+			"description": "Enables the joystick for all platformer levels. <cy>This does not enable the trigger changing in all levels, only the joystick itself.</c>",
+			"default": false
 		}
 	}
 }

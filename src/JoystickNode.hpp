@@ -24,3 +24,14 @@ class JoystickNode : public CCMenu {
         bool m_twoPlayer = false;
         CCPoint m_currentInput = {0, 0};
 };
+
+template <string::ConstexprString S, typename T>
+T const& getSettingFast() {
+    static T value = (
+        listenForSettingChanges<T>(S.data(), [](T val) {
+            value = std::move(val);
+        }),
+        getMod()->getSettingValue<T>(S.data())
+    );
+    return value;
+}
