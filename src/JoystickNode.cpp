@@ -452,15 +452,17 @@ class $modify(LTLSL, LevelSettingsLayer) {
                 m_fields->m_obj = obj;
             }
         });
+        toggler->setID("joystick-toggle"_spr);
         toggler->toggle(m_fields->m_obj != nullptr);
         toggler->setCascadeOpacityEnabled(true);
         toggler->setEnabled(m_settingsObject->m_platformerMode);
         toggler->setOpacity(m_settingsObject->m_platformerMode ? 255 : 100);
-        m_buttonMenu->addChildAtPosition(toggler, Anchor::BottomLeft, {-185, -120}, false);
+        m_buttonMenu->addChildAtPosition(toggler, Anchor::BottomLeft, {185, -120}, false);
         m_fields->m_toggle = toggler;
-        CCLabelBMFont* lab = CCLabelBMFont::create("Joystick:", "goldFont.fnt");
+        CCLabelBMFont* lab = CCLabelBMFont::create("Joystick", "goldFont.fnt");
+        lab->setID("joystick-label"_spr);
         lab->setScale(.6f);
-        m_mainLayer->addChildAtPosition(lab, Anchor::Center, {-185, -95}, false);
+        m_mainLayer->addChildAtPosition(lab, Anchor::Center, {185, -95}, false);
         return true;
     }
 

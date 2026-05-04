@@ -1,3 +1,8 @@
+# 1.0.9
+
+- Move the joystick toggle
+- (dev) Add ids to the label and toggle
+
 # 1.0.8
 
 - Make the joystick globally available via a setting
