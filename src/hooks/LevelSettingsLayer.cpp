@@ -9,7 +9,7 @@ class $modify(PJLevelSettingsLayer, LevelSettingsLayer) {
 	bool init(LevelSettingsObject* object, LevelEditorLayer* layer) {
 		if (!LevelSettingsLayer::init(object, layer)) return false;
 
-        auto btn = Button::createWithNode(CircleButtonSprite::createWithSpriteFrameName("d_circle_01_001.png"), [](auto){
+        auto btn = Button::createWithNode(CircleButtonSprite::createWithSpriteFrameName("joystick.png"_spr), [](auto){
 			FLAlertLayer::create("H", "i", "!")->show();
 		});
 		addChildAtPosition(btn, Anchor::Center, CCPoint{185, -115}, false);
