@@ -1,5 +1,5 @@
 {
-	"geode": "5.0.0-beta.3",
+	"geode": "5.7.1",
 	"gd": {
 		"win": "2.2081",
 		"mac": "2.2081",
@@ -14,7 +14,13 @@
 	"load-priority": -309,
 	"description": "Adds a joystick to platformer mode.",
 	"dependencies": {
-		"geode.node-ids": ">=1.22.0"
+		"geode.node-ids": ">=1.22.0",
+		"alphalaneous.level-storage-api": ">=1.0.2",
+		"alk.better-touch-prio":  ">=1.0.17",
+		"geode.devtools": {
+			"version": ">=1.14.0",
+			"required": false
+		}
 	},
     "links": {
         "source": "https://github.com/kingminer7/platformerjoystick"
