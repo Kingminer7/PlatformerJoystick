@@ -110,7 +110,7 @@ jobs:
           direction: upload
           url: https://codeberg.org
           token: ${{ secrets.CODEBERG_TOKEN }}
-          repo: km7dev/rewards-in-pause
+          repo: km7dev/platformerjoystick
 
           title: Nightly Release
           release-notes: Development release for commit ${{ github.sha }}.
@@ -176,7 +176,7 @@ jobs:
           direction: upload
           url: https://codeberg.org
           token: ${{ secrets.CODEBERG_TOKEN }}
-          repo: km7dev/rewards-in-pause
+          repo: km7dev/platformerjoystick
 
           title: ${{ env.MOD_VERSION }}
           release-notes: ${{ env.CHANGELOG }}
