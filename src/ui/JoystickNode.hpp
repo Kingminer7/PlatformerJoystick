@@ -8,16 +8,16 @@ protected:
     bool init(GJBGL* bgl);
     void draw() override;
 
-    bool ccTouchBegan(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) override;
-    void ccTouchMoved(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) override;
-    void ccTouchEnded(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) override;
-    void ccTouchCancelled(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) override;
-
     bool m_enabled = true;
     bool m_counters = true;
     bool m_advCounters = true;
 public:
     static JoystickNode* create(GJBGL* bgl);
+
+    bool ccTouchBegan(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) override;
+    void ccTouchMoved(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) override;
+    void ccTouchEnded(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) override;
+    void ccTouchCancelled(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) override;
 
     void setEnabled(bool enabled);
     bool isEnabled();

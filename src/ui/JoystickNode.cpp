@@ -10,6 +10,7 @@ bool JoystickNode::init(GJBGL* bgl) {
 
     m_bgl = bgl;
 
+    setID("joystick-node"_spr);
     setTouchEnabled(true);
     setTouchMode(ccTouchesMode::kCCTouchesOneByOne);
     setContentSize({100, 100});
@@ -61,6 +62,7 @@ void JoystickNode::draw() {
 }
 
 bool JoystickNode::ccTouchBegan(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) {
+    if (!isEnabled() || !nodeIsVisible(this)) return false;
     auto local = convertTouchToNodeSpace(touch) - getContentSize() / 2;
     if (local.getLength() < getContentWidth() / 2) {
         setInput(local / getContentWidth() * 3, touch->getTimestamp());
