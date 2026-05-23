@@ -90,6 +90,7 @@ class $modify(PJLevelEditorLayer, LevelEditorLayer) {
     void onPlaytest() {
         LevelEditorLayer::onPlaytest();
         auto js = m_uiLayer->getChildByType<JoystickNode>(0);
+		js->m_initialized = true;
         if (!m_levelSettings->m_platformerMode) {
 			js->setEnabled(false);
 			js->updateVis();

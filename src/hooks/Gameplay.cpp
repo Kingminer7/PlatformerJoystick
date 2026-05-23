@@ -13,7 +13,11 @@ class $modify(PJUILayer, UILayer) {
         auto js = JoystickNode::create(bgl);
 
 		js->runAction(CallFuncExt::create([bgl, js]{
-			if (bgl->m_isEditor) return;
+			js->m_initialized = true;
+			if (bgl->m_isEditor) {
+				js->updateVis();
+				return;
+			}
 			if (!bgl->m_isPlatformer) {
 				js->setCountersEnabled(false);
 				js->setEnabled(false);
@@ -30,8 +34,8 @@ class $modify(PJUILayer, UILayer) {
 				setCounter(bgl, 3740, 1);
 			} else if (!Mod::get()->getSettingValue<bool>("global")) {
 				js->setEnabled(false);
-				js->updateVis();
 			}
+			js->updateVis();
 		}));
 
         js->setZOrder(100);

@@ -38,4 +38,5 @@ public:
     cocos2d::CCPoint m_input{0, 0};
     bool m_kbUp, m_kbDown, m_kbLeft, m_kbRight = false;
     GJBGL* m_bgl;
+    bool m_initialized = false;
 };

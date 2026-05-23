@@ -154,14 +154,20 @@ void JoystickNode::updateCounters() {
 }
 
 void JoystickNode::updateVis() {
+    log::info("Hi 3");
+    if (!m_initialized) return;
+
+    log::info("Hi");
     if (!m_enabled || !m_bgl->m_isPlatformer) {
+
+    log::info("Hi 2");
         setVisible(false);
         return;
     }
 
     setVisible(true);
-
     if (auto p1move = m_bgl->m_uiLayer->getChildByID("platformer-p1-move-button")) {
+        log::info("Moving");
         p1move->setPosition({10000, 10000});
      }
 }

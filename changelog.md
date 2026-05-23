@@ -1,4 +1,4 @@
-# 2.0.0
+# 2.0.0-beta.1
 
 - Rewrote whole mod
 - Changed how it checks for enabled joysticks
