@@ -1,4 +1,5 @@
 #include "JoystickNode.hpp"
+#include "../Utils.hpp"
 #include <Geode/Geode.hpp>
 #include <numbers>
 #include <geode.devtools/include/API.hpp>
@@ -136,11 +137,6 @@ void JoystickNode::updateKeyboard(double timestamp) {
     setInput(inp, timestamp);
 }
 
-inline void setCounter(GJBaseGameLayer* bgl, int id, float val) {
-    bgl->m_effectManager->updateCountForItem(id, val);
-    bgl->updateCounters(id, val);
-}
-
 void JoystickNode::updateCounters() {
     if (!m_counters) return;
     if (m_advCounters) {
@@ -155,6 +151,19 @@ void JoystickNode::updateCounters() {
         else if (m_input.y < -0.3 && m_bgl->m_effectManager->countForItem(3742) != -1) setCounter(m_bgl, 3742, -1);
         else if (m_input.y > -0.3 && m_input.y < 0.3 && m_bgl->m_effectManager->countForItem(3742) != 0) setCounter(m_bgl, 3742, 0);
     }
+}
+
+void JoystickNode::updateVis() {
+    if (!m_enabled || !m_bgl->m_isPlatformer) {
+        setVisible(false);
+        return;
+    }
+
+    setVisible(true);
+
+    if (auto p1move = m_bgl->m_uiLayer->getChildByID("platformer-p1-move-button")) {
+        p1move->setPosition({10000, 10000});
+     }
 }
 
 JoystickNode* JoystickNode::create(GJBGL* bgl) {

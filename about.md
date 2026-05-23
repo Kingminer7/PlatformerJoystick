@@ -6,15 +6,15 @@ Adds a way for level creators to add joystick controls.
 
 - The defaults may conflict with your jump keybind, make sure to have a jump keybind other than W when playing joystick based levels!
 
-## How it works
+## Usage
 
-Creators can enable joysticks by including a text object that says `--enable-joystick`. I recommend setting it to hidden. There's also a checkbox in the level settings that does this for you,
+Players can enable a setting to show the joystick in all platformer levels regardless of if the level supports it or not.
 
-- Note: iOS users may need to disable smart punctuation, since trying to type `--` ends up deleting the 2 dashes because iOS attempts to replace two dashes with an em dash.
+Creators can enable joysticks in a menu in the level settings popup in the editor. 
 
-When joysticks are enabled, you can use the following ids for detection
+When joysticks are enabled in a level, you can use the following ids for detection
 
-- Item id 3740: 1 if the mod is enabled and the previously mentioned text object is in the level.
+- Item id 3740: 1 if the mod is enabled.
 - Item id 3741: Left and right for the joystick
 - Item id 3742: Up and down for the joystick
 

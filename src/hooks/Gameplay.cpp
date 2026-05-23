@@ -1,6 +1,7 @@
 #include <Geode/Geode.hpp>
 #include "../ui/JoystickNode.hpp"
 #include <alphalaneous.level-storage-api/include/LevelStorageAPI.hpp>
+#include "../Utils.hpp"
 
 using namespace geode::prelude;
 
@@ -10,8 +11,29 @@ class $modify(PJUILayer, UILayer) {
 		if (!UILayer::init(bgl)) return false;
 
         auto js = JoystickNode::create(bgl);
-		js->setCountersEnabled(alpha::level_storage::getSavedValue<bool>(bgl, "joystick-counters", Mod::get()));
-		js->setAdvancedCounters(alpha::level_storage::getSavedValue<bool>(bgl, "joystick-advanced", Mod::get()));
+
+		js->runAction(CallFuncExt::create([bgl, js]{
+			if (bgl->m_isEditor) return;
+			if (!bgl->m_isPlatformer) {
+				js->setCountersEnabled(false);
+				js->setEnabled(false);
+				js->updateVis();
+				return;
+			}
+			if (legacy::runChecks(bgl->m_objects)) {
+				js->setCountersEnabled(true);
+			} else {
+				js->setCountersEnabled(alpha::level_storage::getSavedValue<bool>(bgl, "joystick-counters", Mod::get()));
+				js->setAdvancedCounters(alpha::level_storage::getSavedValue<bool>(bgl, "joystick-advanced", Mod::get()));
+			}
+			if (js->isCountersEnabled()) {
+				setCounter(bgl, 3740, 1);
+			} else if (!Mod::get()->getSettingValue<bool>("global")) {
+				js->setEnabled(false);
+				js->updateVis();
+			}
+		}));
+
         js->setZOrder(100);
 		js->addEventListener(KeybindSettingPressedEventV3(Mod::get(), "up-bind"), [this, js](Keybind const& keybind, const bool down, const bool repeat, const double stamp) {
 			if (repeat || !js->isEnabled() || !nodeIsVisible(js) || m_gameLayer->m_playbackMode == PlaybackMode::Paused) return ListenerResult::Propagate;
@@ -44,4 +66,35 @@ class $modify(PJUILayer, UILayer) {
 
 		return true;
 	}
+
+	#if !defined(GEODE_IS_WINDOWS) && !defined(GEODE_IS_ARM_MAC)
+	void refreshDpad() {
+        UILayer::refreshDpad();
+		if (auto node = getChildByType<JoystickNode>(0)) node->updateVis();
+    }
+	#endif
+};
+
+#include <Geode/modify/PlayLayer.hpp>
+class $modify(JSPlayLayer, PlayLayer) {
+	void resetLevel() {
+        PlayLayer::resetLevel();
+		auto js = m_uiLayer->getChildByType<JoystickNode>(0);
+		js->setCountersEnabled(alpha::level_storage::getSavedValue<bool>(this, "joystick-counters", Mod::get()));
+		js->setAdvancedCounters(alpha::level_storage::getSavedValue<bool>(this, "joystick-advanced", Mod::get()));
+		if (js->isCountersEnabled()) {
+			setCounter(this, 3740, 1);
+			js->updateCounters();
+		} else if (!Mod::get()->getSettingValue<bool>("global")) {
+			js->setEnabled(false);
+			js->updateVis();
+		}
+    }
+
+	#if defined(GEODE_IS_WINDOWS) || defined(GEODE_IS_ARM_MAC)
+    void resume() {
+        PlayLayer::resume();
+        if (auto node = m_uiLayer->getChildByType<JoystickNode>(0)) node->updateVis();
+    }
+    #endif
 };

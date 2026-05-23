@@ -1,3 +1,18 @@
+# 2.0.0
+
+- Rewrote whole mod
+- Changed how it checks for enabled joysticks
+- Added advanced mode
+
+# 1.0.9
+
+- Move the joystick toggle
+- (dev) Add ids to the label and toggle
+
+# 1.0.8
+
+- Make the joystick globally available via a setting
+
 # 1.0.7
 
 - Update to Geode v5 / GD 2.2081

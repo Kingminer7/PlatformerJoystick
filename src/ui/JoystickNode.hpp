@@ -29,6 +29,7 @@ public:
     bool isAdvancedCounters();
 
     void updateCounters();
+    void updateVis();
 
     void onMove();
     void setInput(const cocos2d::CCPoint& where, double timestamp);

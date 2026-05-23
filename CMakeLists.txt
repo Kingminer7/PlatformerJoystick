@@ -22,7 +22,7 @@ else()
     add_definitions(-DDEBUG_BUILD)
 endif()
 
-project(PlatformerJoystick VERSION 1.0.7)
+project(PlatformerJoystick VERSION 2.0.0) # i change this version like once every 10 updates
 
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
     src/*.cpp
