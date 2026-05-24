@@ -101,9 +101,7 @@ class $modify(PJLevelEditorLayer, LevelEditorLayer) {
 		js->updateVis();
         js->setCountersEnabled(alpha::level_storage::getSavedValue<bool>(this, "joystick-counters", Mod::get()));
 		js->setAdvancedCounters(alpha::level_storage::getSavedValue<bool>(this, "joystick-advanced", Mod::get()));
-		if (js->isCountersEnabled()) {
-            setCounter(this, 3740, 1);
-        } else if (!Mod::get()->getSettingValue<bool>("global")) {
+		if (!js->isCountersEnabled() && !Mod::get()->getSettingValue<bool>("global")) {
 			js->setEnabled(false);
 			js->updateVis();
 		}

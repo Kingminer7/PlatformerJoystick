@@ -124,8 +124,6 @@ void JoystickNode::setInput(const CCPoint& where, double timestamp) {
         if (old.x > 0.3) m_bgl->queueButton(3, false, false, timestamp);
         else if (old.x < -0.3) m_bgl->queueButton(2, false, false, timestamp);
     }
-
-    updateCounters();
 }
 
 void JoystickNode::updateKeyboard(double timestamp) {
@@ -139,6 +137,7 @@ void JoystickNode::updateKeyboard(double timestamp) {
 
 void JoystickNode::updateCounters() {
     if (!m_counters) return;
+    if (m_bgl->m_effectManager->countForItem(3740) != 1) setCounter(m_bgl, 3740, 1);
     if (m_advCounters) {
         if (m_bgl->m_effectManager->countForItem(3741) != round(m_input.x * 100)) setCounter(m_bgl, 3741, round(m_input.x * 100));
         if (m_bgl->m_effectManager->countForItem(3742) != round(m_input.y * 100)) setCounter(m_bgl, 3742, round(m_input.y * 100));

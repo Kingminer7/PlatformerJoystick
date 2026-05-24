@@ -30,9 +30,7 @@ class $modify(PJUILayer, UILayer) {
 				js->setCountersEnabled(alpha::level_storage::getSavedValue<bool>(bgl, "joystick-counters", Mod::get()));
 				js->setAdvancedCounters(alpha::level_storage::getSavedValue<bool>(bgl, "joystick-advanced", Mod::get()));
 			}
-			if (js->isCountersEnabled()) {
-				setCounter(bgl, 3740, 1);
-			} else if (!Mod::get()->getSettingValue<bool>("global")) {
+			if (!js->isCountersEnabled() && !Mod::get()->getSettingValue<bool>("global")) {
 				js->setEnabled(false);
 			}
 			js->updateVis();
@@ -79,6 +77,14 @@ class $modify(PJUILayer, UILayer) {
 	#endif
 };
 
+#include <Geode/modify/GJBaseGameLayer.hpp>
+class $modify(JSGJBGL, GJBaseGameLayer) {
+    void processQueuedButtons(float dt, bool clear) {
+        m_uiLayer->getChildByType<JoystickNode>(0)->updateCounters();
+	    GJBaseGameLayer::processQueuedButtons(dt, clear);
+    }
+};
+
 #include <Geode/modify/PlayLayer.hpp>
 class $modify(JSPlayLayer, PlayLayer) {
 	void resetLevel() {
@@ -86,10 +92,7 @@ class $modify(JSPlayLayer, PlayLayer) {
 		auto js = m_uiLayer->getChildByType<JoystickNode>(0);
 		js->setCountersEnabled(alpha::level_storage::getSavedValue<bool>(this, "joystick-counters", Mod::get()));
 		js->setAdvancedCounters(alpha::level_storage::getSavedValue<bool>(this, "joystick-advanced", Mod::get()));
-		if (js->isCountersEnabled()) {
-			setCounter(this, 3740, 1);
-			js->updateCounters();
-		} else if (!Mod::get()->getSettingValue<bool>("global")) {
+		if (!js->isCountersEnabled() && !Mod::get()->getSettingValue<bool>("global")) {
 			js->setEnabled(false);
 			js->updateVis();
 		}

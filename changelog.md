@@ -1,3 +1,7 @@
+# 2.0.0-beta.2
+
+- Change counters on tick instead of frame tapped
+
 # 2.0.0-beta.1
 
 - Rewrote whole mod
