@@ -153,22 +153,18 @@ void JoystickNode::updateCounters() {
 }
 
 void JoystickNode::updateVis() {
-    log::info("Hi 3");
     if (!m_initialized) return;
 
-    log::info("Hi");
     if (!m_enabled || !m_bgl->m_isPlatformer) {
-
-    log::info("Hi 2");
         setVisible(false);
         return;
     }
 
     setVisible(true);
+    setPosition(Mod::get()->getSavedValue<float>("joystick-x", 100), Mod::get()->getSavedValue<float>("joystick-y", 80));
     if (auto p1move = m_bgl->m_uiLayer->getChildByID("platformer-p1-move-button")) {
-        log::info("Moving");
         p1move->setPosition({10000, 10000});
-     }
+    }
 }
 
 JoystickNode* JoystickNode::create(GJBGL* bgl) {

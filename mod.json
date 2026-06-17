@@ -8,7 +8,7 @@
 	},
 	"id": "km7dev.platformerjoystick",
 	"name": "Platformer Joystick",
-	"version": "v2.0.0-beta.2",
+	"version": "v2.0.0",
 	"developer": "km7dev",
     "early-load": true,
 	"description": "Adds a joystick to platformer mode.",
@@ -68,6 +68,13 @@
 			"name": "Enable Globally",
 			"description": "Enables the joystick for all platformer levels. <cy>This does not enable the counter changing in all levels, only the joystick itself.</c>",
 			"default": false
+		},
+		"pos": {
+			"type": "button",
+			"buttons": {
+				"edit": "Edit Position"
+			},
+			"description": "Edit the position of the joystick"
 		}
 	}
 }

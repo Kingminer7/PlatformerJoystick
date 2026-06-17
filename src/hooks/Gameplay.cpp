@@ -64,7 +64,7 @@ class $modify(PJUILayer, UILayer) {
 			js->updateKeyboard(stamp);
 			return ListenerResult::Stop;
 		}, -100);
-		addChildAtPosition(js, Anchor::BottomLeft, {100, 80}, false);
+		addChildAtPosition(js, Anchor::BottomLeft, {Mod::get()->getSavedValue<float>("joystick-x", 100), Mod::get()->getSavedValue<float>("joystick-y", 80)}, false);
 
 		return true;
 	}

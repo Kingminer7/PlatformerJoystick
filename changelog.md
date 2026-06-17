@@ -1,3 +1,7 @@
+# 2.0.0
+
+- Make the thing movable
+
 # 2.0.0-beta.2
 
 - Change counters on tick instead of frame tapped
