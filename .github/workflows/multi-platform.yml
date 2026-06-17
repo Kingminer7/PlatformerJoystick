@@ -58,9 +58,8 @@ jobs:
           bindings: geode-sdk/bindings
           bindings-ref: main
           combine: true
-          build-config: ${{ !(github.event.inputs.build_type == 'release' || (github.event_name == 'push' && startsWith(github.event.head_commit.message, '[rel]'))) && (matrix.config.target == 'Win64' && 'RelWithDebInfo' || 'Debug') || 'Release' }}
-          export-pdb: true
-          export-symbols: true
+          build-config: ${{ matrix.config.target == 'Win64' && 'RelWithDebInfo' || !(github.event.inputs.build_type == 'release' || (github.event_name == 'push' && startsWith(github.event.head_commit.message, '[rel]'))) &&  'Debug' || 'Release' }}
+          export-debug: true
           target: ${{ matrix.config.target }}
 
   package:
@@ -100,9 +99,7 @@ jobs:
           body: |
             Development release for commit ${{ github.sha }}.
           files: |
-            ./artifacts/build-output/*.geode
-            ./artifacts/build-output/*.pdb
-            ./artifacts/build-output/*.sym
+            ./artifacts/build-output/*
             
       - name: Create Nightly Release (Codeberg)
         uses: kingminer7/forgejo-release@main
@@ -166,9 +163,7 @@ jobs:
             ${{ env.CHANGELOG }}
           draft: false
           files: |
-            ./artifacts/build-output/*.geode
-            ./artifacts/build-output/*.pdb
-            ./artifacts/build-output/*.sym
+            ./artifacts/build-output/*
 
       - name: Create Release (Codeberg)
         uses: kingminer7/forgejo-release@main
