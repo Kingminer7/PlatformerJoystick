@@ -11,30 +11,31 @@ class $modify(PJUILayer, UILayer) {
 		if (!UILayer::init(bgl)) return false;
 
         auto js = JoystickNode::create(bgl);
-
-		js->runAction(CallFuncExt::create([bgl, js]{
-			js->m_initialized = true;
-			if (bgl->m_isEditor) {
-				js->updateVis();
-				return;
-			}
-			if (!bgl->m_isPlatformer) {
-				js->setCountersEnabled(false);
-				js->setEnabled(false);
-				js->updateVis();
-				return;
-			}
-			if (legacy::runChecks(bgl->m_objects)) {
-				js->setCountersEnabled(true);
-			} else {
-				js->setCountersEnabled(alpha::level_storage::getSavedValue<bool>(bgl, "joystick-counters", Mod::get()));
-				js->setAdvancedCounters(alpha::level_storage::getSavedValue<bool>(bgl, "joystick-advanced", Mod::get()));
-			}
-			if (!js->isCountersEnabled() && !Mod::get()->getSettingValue<bool>("global")) {
-				js->setEnabled(false);
-			}
+	js->setVisible(false);
+	queueInMainThread([bgl, js]{
+		if (!js || !bgl) return;
+		js->m_initialized = true;
+		if (bgl->m_isEditor) {
 			js->updateVis();
-		}));
+			return;
+		}
+		if (!bgl->m_isPlatformer) {
+			js->setCountersEnabled(false);
+			js->setEnabled(false);
+			js->updateVis();
+			return;
+		}
+		if (legacy::runChecks(bgl->m_objects)) {
+			js->setCountersEnabled(true);
+		} else {
+			js->setCountersEnabled(alpha::level_storage::getSavedValue<bool>(bgl, "joystick-counters", Mod::get()));
+			js->setAdvancedCounters(alpha::level_storage::getSavedValue<bool>(bgl, "joystick-advanced", Mod::get()));
+		}
+		if (!js->isCountersEnabled() && !Mod::get()->getSettingValue<bool>("global")) {
+			js->setEnabled(false);
+		}
+		js->updateVis();
+	});
 
         js->setZOrder(100);
 		js->addEventListener(KeybindSettingPressedEventV3(Mod::get(), "up-bind"), [this, js](Keybind const& keybind, const bool down, const bool repeat, const double stamp) {
